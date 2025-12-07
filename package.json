@@ -1,5 +1,5 @@
 {
-	"name": "cloudflare-fimg-pototype",
+	"name": "cloudflare-fimg",
 	"type": "module",
 	"scripts": {
 		"dev": "wrangler dev",
