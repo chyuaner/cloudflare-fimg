@@ -15,7 +15,7 @@ const app = new Hono<Env>();
 app.use('*', async (c, next) => {
   if (!c.get('assetLoader')) {
     // In CF worker, index.ts should set this. 
-    // In Node adapter, node-server.ts should set this.
+    // In Node adapter, server.ts should set this.
     return c.text('Internal Server Error: AssetLoader not configured', 500);
   }
   await next();
