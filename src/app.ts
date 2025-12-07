@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { trimTrailingSlash } from 'hono/trailing-slash'
 import { AssetLoader } from './assetLoader';
 import { applyRoutes } from './router';
 
@@ -9,7 +10,8 @@ type Env = {
   }
 };
 
-const app = new Hono<Env>();
+const app = new Hono<Env>({ strict: true });
+app.use(trimTrailingSlash())
 
 // -----------------------------------------------------------------------------
 // 處理靜態資源路由
