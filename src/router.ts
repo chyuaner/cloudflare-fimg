@@ -15,15 +15,26 @@ export const parseSize = (sizeStr: string) => {
 
 export const parseColor = (colorStr: string) => {
   // Support "ff0000" -> "#ff0000", "000" -> "#000"
-  // Also support "ff0000,128" -> rgba? users ex: "ff0000,128".
-  // Let's assume user means hex + alpha(0-255).
-  // The user example: "ff0000", "000", "ff0000,128"
+  // Also support "ff0000,128" -> "#ff000080"
+  
+  const [hexPart, alphaPart] = colorStr.split(',');
+  let color = hexPart.startsWith('#') ? hexPart : '#' + hexPart;
 
-  const [hex, alpha] = colorStr.split(',');
-  let color = hex.startsWith('#') ? hex : '#' + hex;
+  if (alphaPart) {
+      // Normalize to 6 digits if 3 digits
+      if (color.length === 4) { // #RGB
+          const r = color[1];
+          const g = color[2];
+          const b = color[3];
+          color = `#${r}${r}${g}${g}${b}${b}`;
+      }
 
-  // Basic validation/sanitization could be added here
-  return { color, alpha };
+      const a = Math.max(0, Math.min(255, Number(alphaPart)));
+      const alphaHex = Math.round(a).toString(16).padStart(2, '0');
+      color += alphaHex;
+  }
+
+  return color;
 };
 
 // -----------------------------------------------------------------------------
@@ -62,11 +73,9 @@ export const applyRoutes = (app: Hono<any>) => {
     const { width, height } = parseSize(rawSize);
 
     // Defaults
-    const bgColor = rawBg ? parseColor(rawBg).color : '#cccccc'; // Default grey
-    // const bgAlpha = rawBg ? parseColor(rawBg).alpha : undefined; // TODO: Handle alpha if needed in style
+    const bgColor = rawBg ? parseColor(rawBg) : '#cccccc'; // Default grey
 
-    const fgColor = rawFg ? parseColor(rawFg).color : '#969696'; // Default darker grey
-    // const fgAlpha = ...
+    const fgColor = rawFg ? parseColor(rawFg) : '#969696'; // Default darker grey
 
     const query = c.req.query();
     const text = query.text || `${width}x${height}`;
