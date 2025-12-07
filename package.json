@@ -2,11 +2,13 @@
     "name": "cloudflare-fimg",
     "type": "module",
     "scripts": {
-        "dev": "wrangler dev",
-        "dev:node": "tsx watch src/server.ts",
+        "dev": "concurrently \"npm run watch:css\" \"wrangler dev\"",
+        "dev:node": "concurrently \"npm run watch:css\" \"tsx watch src/server.ts\"",
         "start": "tsx src/server.ts",
-        "deploy": "wrangler deploy --minify",
-        "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+        "deploy": "npm run build:css && wrangler deploy --minify",
+        "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+        "build:css": "tailwindcss -i ./src/input.css -o ./public/styles.css",
+        "watch:css": "tailwindcss -i ./src/input.css -o ./public/styles.css --watch"
     },
     "dependencies": {
         "@cf-wasm/og": "^0.3.3",
@@ -14,7 +16,10 @@
         "hono": "^4.10.7"
     },
     "devDependencies": {
+        "@tailwindcss/cli": "^4.1.17",
         "@types/node": "^24.10.1",
+        "concurrently": "^9.2.1",
+        "tailwindcss": "^4.1.17",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3",
         "wrangler": "^4.53.0"
