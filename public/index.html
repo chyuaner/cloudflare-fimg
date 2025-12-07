@@ -1,11 +1,44 @@
 <!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Hello, World!</title>
-    </head>
-    <body>
-        <h1 id="heading">Test</h1>
-    </body>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello, World!</title>
+    <style>
+        body { font-family: system-ui, sans-serif; padding: 2rem; line-height: 1.6; }
+        pre { background:#f5f5f5; padding:1rem; overflow:auto; }
+        img { margin: .5rem; border:1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Fake Image Service</h1>
+    <p>以下示範是使用本服務產生的圖片：</p>
+
+    <div>
+    <img src="/300" alt="300x300">
+    <img src="/250x100/ff0000/000" alt="250x100, red background, black text">
+    <img src="/350x200/ff0000/000?text=Hello" alt="Hello">
+    <img src="/350x200/ff0000,128/000,255?text=Transparent" alt="transparent">
+    <img src="/200x100?retina=1&text=こんにちは&font=NotoSansJP-Regular" alt="Japanese">
+    <img src="/350x200?text=World&font=Lobster-Regular" alt="World + Lobster">
+    <img src="/300.png?text=PNG+Forced" alt="PNG Forced">
+    </div>
+
+    <h2>URL 參數說明</h2>
+    <table>
+    <tr><th>參數</th><th>說明</th></tr>
+    <tr><td><code>text</code></td><td>要顯示的文字（預設為 <code>{width}x{height}</code>）</td></tr>
+    <tr><td><code>font</code></td><td>字體名稱，對應 <code>/public/font/</code> 下的 TTF 檔（不含副檔名）</td></tr>
+    <tr><td><code>retina=1</code></td><td>開啟 Retina（2x）輸出（暫未實作，可自行擴充）</td></tr>
+    <tr><td><code>format=png</code></td><td>強制輸出 PNG</td></tr>
+    </table>
+
+    <h2>路由結構（示範）</h2>
+    <pre>
+    /{size}/{bgColor}/{fgColor}?text=...&font=...&format=...
+    /{size}.png?text=...                // 強制 PNG
+    </pre>
+
+    <p>更多細節請參考 <a href="https://github.com/your-repo">GitHub Repo</a>。</p>
+</body>
 </html>
