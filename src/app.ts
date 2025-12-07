@@ -21,6 +21,17 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+// Root handler to serve index.html
+app.get('/', async (c) => {
+  const loader = c.get('assetLoader');
+  try {
+    const html = await loader.loadText('index.html');
+    return c.html(html);
+  } catch (e) {
+    return c.text('Not Found', 404);
+  }
+});
+
 // Helper to parse size
 const parseSize = (sizeStr: string) => {
   if (sizeStr.includes('x')) {

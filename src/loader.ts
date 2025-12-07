@@ -40,6 +40,17 @@ export class CloudflareAssetLoader implements AssetLoader {
     }
     throw new Error("CloudflareAssetLoader requires a Fetcher binding for assets");
   }
+
+  async loadText(path: string): Promise<string> {
+     if (this.assetsFetcher) {
+        const response = await this.assetsFetcher.fetch(`http://assets/${path}`);
+        if (!response.ok) {
+            throw new Error(`Failed to load text ${path}: ${response.statusText}`);
+        }
+        return response.text();
+    }
+    throw new Error("CloudflareAssetLoader requires a Fetcher binding for assets");
+  }
 }
 
 export class NodeAssetLoader implements AssetLoader {
@@ -57,5 +68,12 @@ export class NodeAssetLoader implements AssetLoader {
     const filePath = path.join(process.cwd(), 'public', relativePath);
     const buffer = await fs.readFile(filePath);
     return buffer.buffer as ArrayBuffer;
+  }
+
+  async loadText(relativePath: string): Promise<string> {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    const filePath = path.join(process.cwd(), 'public', relativePath);
+    return fs.readFile(filePath, 'utf-8');
   }
 }
