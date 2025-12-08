@@ -1,6 +1,8 @@
 # prod
+
+# Build output
 dist/
-public/build/
+public/
 
 # dev
 .yarn/
@@ -15,6 +17,7 @@ public/build/
 # deps
 node_modules/
 .wrangler
+.astro/
 
 # env
 .env

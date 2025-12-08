@@ -27,15 +27,10 @@ app.use('*', async (c, next) => {
 });
 
 // Root handler to serve index.html
-app.get('/', async (c) => {
-  const loader = c.get('assetLoader');
-  try {
-    const html = await loader.loadText('index.html');
-    return c.html(html);
-  } catch (e) {
-    return c.text('Not Found', 404);
-  }
-});
+// Root handler to serve index.html
+// Static assets (including index.html) are handled by Cloudflare Workers Assets or Node serve-static middleware.
+// This route is only a fallback or for dynamic API logic.
+
 
 // -----------------------------------------------------------------------------
 // 處理圖片生成 動態路由
