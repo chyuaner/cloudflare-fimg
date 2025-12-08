@@ -13,18 +13,12 @@ export async function handleRequest(
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // Remove trailing slash
+  // 處理結尾斜線
   const normalizedPath = pathname.endsWith('/') && pathname.length > 1
     ? pathname.slice(0, -1)
     : pathname;
 
-  // Root path - this should be handled by static assets in production
-  // For dynamic routes, we only handle image generation paths
-  if (normalizedPath === '' || normalizedPath === '/') {
-    return new Response('Not Found', { status: 404 });
-  }
-
-  // Debug route - returns parsed URL structure as JSON
+  // Debug route - 測試網址結構解析用
   // Note: Use original pathname (not normalizedPath) to preserve trailing slashes
   if (pathname.startsWith('/debug/')) {
     const debugPath = pathname.slice(7); // Remove '/debug/' prefix
