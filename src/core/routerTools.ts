@@ -42,12 +42,20 @@ export const parseColor = (colorStr: string) => {
 // Regex for Discord emotes: <:name:id>
 const DISCORD_EMOTE_REGEX = /<:(\w+):(\d+)>/g;
 
+export const parseTextToElements = (
+  /** 可能為 undefined，若無則視為空字串 */ text: string | undefined,
+  /** fontSize 也允許 undefined，若無則使用 100 作為 fallback */ fontSizeVal: number | undefined
+) => {
 
-export const parseTextToElements = (text: string, fontSizeVal: number) => {
+  const safeText = typeof text === 'string' ? text : '';
+  const safeFontSize = typeof fontSizeVal === 'number' && !isNaN(fontSizeVal)
+    ? fontSizeVal
+    : 100; // 預設 100px
+
   const elements: any[] = [];
   let lastIndex = 0;
 
-  const matches = Array.from(text.matchAll(DISCORD_EMOTE_REGEX));
+  const matches = Array.from(safeText.matchAll(DISCORD_EMOTE_REGEX));
 
   for (const match of matches) {
     const matchIndex = match.index!;
@@ -58,7 +66,7 @@ export const parseTextToElements = (text: string, fontSizeVal: number) => {
     if (matchIndex > lastIndex) {
       elements.push({
         type: 'span',
-        props: { children: text.substring(lastIndex, matchIndex) }
+        props: { children: safeText.substring(lastIndex, matchIndex) }
       });
     }
 
@@ -81,10 +89,10 @@ export const parseTextToElements = (text: string, fontSizeVal: number) => {
   }
 
   // Process failing text after the last match
-  if (lastIndex < text.length) {
+  if (lastIndex < safeText.length) {
     elements.push({
       type: 'span',
-      props: { children: text.substring(lastIndex) }
+      props: { children: safeText.substring(lastIndex) }
     });
   }
 

@@ -37,11 +37,13 @@ export async function handleRequest(
   const fullPath = normalizedPath + url.search;
   const { canvas, bg, content } = parseFakeImgUrlDetailed(fullPath);
 
-  // canvas (必定存在於簡寫語法) → sizeParam
-  const sizeParam = canvas;
-  if (!sizeParam) {
-    return new Response('Bad Request: Size parameter required', { status: 400 });
-  }
+
+  // canvas (sizeParam) 現改為選填
+  // 若未提供則不設定 width / height，交由 ImageResponse 依內容自動決定畫布大小
+  const sizeParam = canvas ?? null;
+  // 只有在提供 sizeParam 時才解析尺寸
+  const hasSize = !!sizeParam;
+  const { width, height } = hasSize ? parseSize(sizeParam) : { width: undefined, height: undefined };
 
   // 目前尚未實作邊緣背景 (bg block) ，故直接使用 content.parts 作顏色來源
   // content.parts[0] → 主內容背景顏色 (原本的 bgColor)
@@ -54,8 +56,7 @@ export async function handleRequest(
   const fgColor = fgPart ? parseColor(fgPart) : '#969696';   // 預設較深的灰
 
   // Parse query parameters
-  const { width, height } = parseSize(sizeParam);
-  const text = url.searchParams.get('text') || `${width}x${height}`;
+  const text = url.searchParams.get('text') || (hasSize ? `${width}x${height}` : undefined);
   const fontName = url.searchParams.get('font') || 'noto'; // Default to noto
   const retina = url.searchParams.get('retina') === '1';
 
@@ -75,7 +76,7 @@ export async function handleRequest(
   }
 
   // Generate Image
-  const fontSizeVal = Math.floor(Math.min(width, height) / 5);
+  const fontSizeVal = Math.floor(Math.min(width ?? 100, height ?? 100) / 5);
   const parsedChildren = parseTextToElements(text, fontSizeVal);
 
   const element = {
@@ -100,8 +101,11 @@ export async function handleRequest(
   const format = 'svg';
 
   const imageResponse = new ImageResponse(element as any, {
-    width: retina ? width * 2 : width,
-    height: retina ? height * 2 : height,
+    // 若未提供 sizeParam，寬高會是 undefined，ImageResponse 會自行根據內容決定畫布大小
+    ...(hasSize && {
+      width: retina ? width! * 2 : width!,
+      height: retina ? height! * 2 : height!,
+    }),
     fonts: [
       {
         name: fontName,
