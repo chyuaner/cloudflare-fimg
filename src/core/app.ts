@@ -70,20 +70,28 @@ export async function handleRequest(
   }
 
   // Parse the URL for image generation parameters
-  const { forcePng, forceSvg, sizeParam, bgParam, fgParam } = parseFakeImgUrl(normalizedPath);
+  // Include query string to ensure consistent parsing with debug route
+  const fullPath = normalizedPath + url.search;
+  const { canvas, bg, content } = parseFakeImgUrlDetailed(fullPath);
 
+  // canvas (必定存在於簡寫語法) → sizeParam
+  const sizeParam = canvas;
   if (!sizeParam) {
     return new Response('Bad Request: Size parameter required', { status: 400 });
   }
 
-  // Parse size
-  const { width, height } = parseSize(sizeParam);
+  // 目前尚未實作邊緣背景 (bg block) ，故直接使用 content.parts 作顏色來源
+  // content.parts[0] → 主內容背景顏色 (原本的 bgColor)
+  // content.parts[1] → 主內容文字顏色 (原本的 fgColor)
+  const bgPart = content.parts[0] ?? null;
+  const fgPart = content.parts[1] ?? null;
 
-  // Parse colors with defaults
-  const bgColor = bgParam ? parseColor(bgParam) : '#cccccc'; // Default grey
-  const fgColor = fgParam ? parseColor(fgParam) : '#969696'; // Default darker grey
+  // 若沒有提供顏色，使用預設值
+  const bgColor = bgPart ? parseColor(bgPart) : '#cccccc';   // 預設灰
+  const fgColor = fgPart ? parseColor(fgPart) : '#969696';   // 預設較深的灰
 
   // Parse query parameters
+  const { width, height } = parseSize(sizeParam);
   const text = url.searchParams.get('text') || `${width}x${height}`;
   const fontName = url.searchParams.get('font') || 'noto'; // Default to noto
   const retina = url.searchParams.get('retina') === '1';
@@ -125,8 +133,8 @@ export async function handleRequest(
     },
   };
 
-  // Determine format
-  const format = forcePng ? 'png' : 'svg'; // SVG by default
+  // 預設輸出 SVG
+  const format = 'svg';
 
   const imageResponse = new ImageResponse(element as any, {
     width: retina ? width * 2 : width,

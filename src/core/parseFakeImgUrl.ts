@@ -51,7 +51,7 @@ export function parseFakeImgUrl(
     const nextIdx = blockKeys
       .map(k2 => path.indexOf(`/${k2}/`, start))
       .filter(i => i !== -1)
-      .sort((a, b) => a - b)[0] ?? path.lastIndexOf('/');
+      .sort((a, b) => a - b)[0] ?? path.length;
     const raw = path.slice(start, nextIdx);
     const parts = raw ? raw.split('/').filter(Boolean) : [];
     blocks[key] = { parts };
