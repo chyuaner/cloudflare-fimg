@@ -8,8 +8,11 @@ import { parseFakeImgUrl as parseFakeImgUrlDetailed } from './parseFakeImgUrl';
 // -----------------------------------------------------------------------------
 export async function handleRequest(
   request: Request,
-  assetLoader: AssetLoader
+  assetLoader: AssetLoader,
+  env?: Record<string, any>
 ): Promise<Response> {
+  const enableDebug = env?.ENABLE_DEBUG === 'true';
+
   const url = new URL(request.url);
   const pathname = url.pathname;
 
@@ -20,7 +23,7 @@ export async function handleRequest(
 
   // Debug route - 測試網址結構解析用
   // Note: Use original pathname (not normalizedPath) to preserve trailing slashes
-  if (pathname.startsWith('/debug/')) {
+  if (enableDebug && pathname.startsWith('/debug/')) {
     const debugPath = pathname.slice(7); // Remove '/debug/' prefix
     const fullDebugPath = debugPath + url.search; // Include query string
     const parsed = parseFakeImgUrlDetailed(fullDebugPath);
