@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* DaisyUI Plugin - Tailwind v4 CSS-first configuration */
+@plugin "daisyui" {
+    themes: nord --default, dracula --prefersdark;
+    /* exclude: alert ,avatar ,badge ,breadcrumbs ,button ,calendar ,card ,carousel ,chat ,checkbox ,collapse ,countdown ,diff ,divider ,dock ,drawer ,dropdown ,fab ,fieldset ,fileinput ,filter ,footer ,hero ,hover3d ,hovergallery ,indicator ,input ,kbd ,label ,link ,list ,loading ,mask ,menu ,mockup ,modal ,navbar ,progress ,radialprogress ,radio ,range ,rating ,select ,skeleton ,stack ,stat ,status ,steps ,swap ,tab ,table ,textarea ,textrotate ,timeline ,toast, properties, reset ,rootscrollgutter ,rootscrolllock ,scrollbar, glass, join, radius, typography; */
+    root: ":root";
+}
+
+/* Custom Styles */

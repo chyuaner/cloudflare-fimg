@@ -1,0 +1,65 @@
+---
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+    <title>Hello, World!</title>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col items-center py-10 px-4">
+    <div class="max-w-4xl w-full bg-white shadow-lg rounded-xl p-8">
+        <h1 class="text-4xl font-bold text-blue-600 mb-6 border-b pb-4">FakeImg Clone</h1>
+        <p class="mb-6 text-lg">A dynamic image placeholder service running on Cloudflare Workers & Node.js.</p>
+
+        <div class="grid gap-8">
+            <section>
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Usage Examples</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <code class="text-sm bg-gray-800 text-green-400 p-2 rounded flex-1">/300</code>
+                        <img src="/300" alt="300x300" class="border rounded shadow-sm">
+                    </div>
+
+                    <div class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <code class="text-sm bg-gray-800 text-green-400 p-2 rounded flex-1">/250x100</code>
+                        <img src="/250x100" alt="250x100" class="border rounded shadow-sm">
+                    </div>
+
+                    <div class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <code class="text-sm bg-gray-800 text-green-400 p-2 rounded flex-1">/350x200/ff0000/fff</code>
+                        <img src="/350x200/ff0000/fff" alt="Colored" class="border rounded shadow-sm">
+                    </div>
+
+                    <div class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <code class="text-sm bg-gray-800 text-green-400 p-2 rounded flex-1">/350x200/?text=Hello+World&font=noto</code>
+                        <img src="/350x200/?text=Hello+World&font=noto" alt="Text and Font" class="border rounded shadow-sm">
+                    </div>
+                     <div class="bg-gray-100 p-4 rounded-lg flex flex-col md:flex-row items-start md:items-center gap-4">
+                        <code class="text-sm bg-gray-800 text-green-400 p-2 rounded flex-1">/300.png (Force PNG)</code>
+                        <img src="/300.png" alt="PNG Force" class="border rounded shadow-sm">
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">API Documentation</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li><strong>Structure:</strong> <code class="bg-gray-200 px-1 rounded">/size/bgColor/textColor</code></li>
+                    <li><strong>Colors:</strong> Hex codes (e.g. <code>ff0000</code>) or Hex+Alpha (e.g. <code>ff0000,128</code> for 50% opacity).</li>
+                    <li><strong>Query Parameters:</strong>
+                        <ul class="list-circle pl-5 mt-1 text-sm text-gray-600">
+                            <li><code>text</code>: Custom text content.</li>
+                            <li><code>font</code>: Font name (e.g., <code>noto</code>, <code>lobster</code>).</li>
+                            <li><code>retina</code>: Set to <code>1</code> for 2x pixel density.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

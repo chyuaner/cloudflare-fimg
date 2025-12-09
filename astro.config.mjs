@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,8 @@ export default defineConfig({
     host: true
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss({
+      config: path.resolve('./tailwind.config.js'),
+    })],
   },
 });
