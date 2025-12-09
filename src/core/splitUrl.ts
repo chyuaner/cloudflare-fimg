@@ -47,7 +47,7 @@
  *   - content:{ type:string|null, parts:string[] }
  *   - query:  Record<string,string>
  */
-export function parseFakeImgUrl(
+export function splitUrl(
   urlStr: string,
   contentKeys: string[] = ['ph', 'code', 'img']
 ) {

@@ -1,7 +1,8 @@
 import { ImageResponse } from '@cf-wasm/og';
 import { AssetLoader } from './assetLoader';
-import { parseSize, parseColor, parseTextToElements } from './routerTools';
-import { parseFakeImgUrl as parseFakeImgUrlDetailed } from './parseFakeImgUrl';
+import { parseSize, parseColor } from './parseUrl';
+import { parseTextToElements } from './renderHelper';
+import { splitUrl } from './splitUrl';
 
 // -----------------------------------------------------------------------------
 // Main Request Handler
@@ -30,7 +31,7 @@ export async function handleRequest(request: Request, assetLoader: AssetLoader, 
   if (enableDebug && pathname.startsWith('/debug/')) {
     const debugPath = pathname.slice(7); // Remove '/debug/' prefix
     const fullDebugPath = debugPath + url.search; // Include query string
-    const parsed = parseFakeImgUrlDetailed(fullDebugPath);
+    const parsed = splitUrl(fullDebugPath);
     return new Response(JSON.stringify(parsed, null, 2), {
       status: 200,
       headers: {
@@ -45,7 +46,7 @@ export async function handleRequest(request: Request, assetLoader: AssetLoader, 
   // Parse the URL for image generation parameters
   // Include query string to ensure consistent parsing with debug route
   const fullPath = normalizedPath + url.search;
-  const { canvas, bg, content } = parseFakeImgUrlDetailed(fullPath);
+  const { canvas, bg, content } = splitUrl(fullPath);
 
   // Load font
   const fontName = url.searchParams.get('font') || 'noto'; // Default to noto
