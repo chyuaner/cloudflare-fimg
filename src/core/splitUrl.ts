@@ -69,10 +69,13 @@ export function splitUrl(
         })
     );
 
+  // 正則：需要剔除的副檔名
+  const EXT_REG = /\.(png|svg|jpg|jpeg|gif)$/i; // 需要剔除的副檔名
+
   // ---------- 先找 canvas ----------
   const first = segs[0];
   const isCanvas = !(first === '' || first === 'bg' || contentKeys.includes(first));
-  const canvas = isCanvas ? first : null;
+  const canvas = isCanvas ? first.replace(EXT_REG, '') : null;
 
   // ---------- 預設空區塊 ----------
   const blockKeys = ['bg', ...contentKeys];          // 必須先列出 bg
@@ -81,6 +84,7 @@ export function splitUrl(
 
   // ---------- 先用 "/bg/"、"/ph/"… 的正式寫法切割 ----------
   const path = pathname;                        // 保留前導 '/'
+
   for (const key of blockKeys) {
     const idx = path.indexOf(`/${key}/`);
     if (idx === -1) continue;                      // 沒有此區塊
@@ -90,7 +94,13 @@ export function splitUrl(
       .filter(i => i !== -1)
       .sort((a, b) => a - b)[0] ?? path.length;
     const raw = path.slice(start, nextIdx);
-    const parts = raw ? raw.split('/').filter(Boolean) : [];
+    // 先 split 成段落，然後把每段可能的副檔名移除
+    const parts = raw
+      ? raw
+          .split('/')
+          .filter(Boolean)
+          .map(p => p.replace(EXT_REG, ''))   // ← 這裡去除 .png/.svg 等
+      : [];
     blocks[key] = { parts };
   }
 
@@ -102,7 +112,10 @@ export function splitUrl(
     // 從第二段開始，所有不是 'bg' 關鍵字的段落都視為 ph 內容
     const contentParts: string[] = [];
     for (let i = 1; i < segs.length; i++) {
-      const seg = segs[i];
+      let seg = segs[i];
+      // 若最後一段帶有副檔名，先去除
+      seg = seg.replace(EXT_REG, '');
+
       // 如果遇到明確的關鍵字（bg, ph, code, img），停止
       if (seg === 'bg' || contentKeys.includes(seg)) {
         break;
