@@ -79,10 +79,30 @@ export function parseFakeImgUrl(
   }
 
   // ---------- 主內容 ----------
+  // ---------- 主內容 ----------
   const contentKey = contentKeys.find(k => blocks[k].parts.length > 0) || null;
-  const content = contentKey
-    ? { type: contentKey, parts: blocks[contentKey].parts }
-    : { type: null, parts: [] };
+  const contentParts = contentKey ? blocks[contentKey].parts : [];
+  
+  // 處理 named keys for content (ph)
+  let contentObj: any = { type: contentKey, parts: contentParts };
+  if (contentKey === 'ph') {
+    contentObj = {
+      ...contentObj,
+      bgcolor: contentParts[0],
+      fgcolor: contentParts[1],
+    };
+  }
 
-  return { canvas, bg: blocks.bg, content, query };
+  // 處理 named keys for bg
+  // [bg-padding]/[bg-shadow]/[bg-bgcolor]/[bg-radius]
+  const bgParts = blocks.bg.parts;
+  const bgObj = {
+      parts: bgParts,
+      padding: bgParts[0],
+      shadow: bgParts[1],
+      bgcolor: bgParts[2],
+      radius: bgParts[3],
+  };
+
+  return { canvas, bg: bgObj, content: contentObj, query };
 }
