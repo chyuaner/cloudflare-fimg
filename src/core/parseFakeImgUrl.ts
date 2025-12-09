@@ -1,4 +1,41 @@
 /**
+ * 網址參數拆分器
+ *
+ * 若網址帶入 http://localhost:8787/350x200/bg/8/4/ff0000,128/4/ph/ff0000,128/000,255/?text=Hello+World&font=noto
+ *
+ * 將會回傳
+ * ```
+ * {
+ *   "canvas": "350x200",
+ *   "bg": {
+ *     "parts": [
+ *       "8",
+ *       "4",
+ *       "ff0000,128",
+ *       "4"
+ *     ],
+ *     "padding": "8",
+ *     "shadow": "4",
+ *     "bgcolor": "ff0000,128",
+ *     "radius": "4"
+ *   },
+ *   "content": {
+ *     "type": "ph",
+ *     "parts": [
+ *       "ff0000,128",
+ *       "000,255"
+ *     ],
+ *     "bgcolor": "ff0000,128",
+ *     "fgcolor": "000,255"
+ *   },
+ *   "query": {
+ *     "text": "Hello+World",
+ *     "font": "noto"
+ *   }
+ * }
+ * ```
+ *
+ *
  * 兼容兩種語法
  *   1. 完整寫法：/bg/.../ph/...   (原本支援的)
  *   2. 簡寫：/<canvas>/<phContent>/<phContent>... (fakeimg.pl 常見簡寫)
@@ -79,10 +116,9 @@ export function parseFakeImgUrl(
   }
 
   // ---------- 主內容 ----------
-  // ---------- 主內容 ----------
   const contentKey = contentKeys.find(k => blocks[k].parts.length > 0) || null;
   const contentParts = contentKey ? blocks[contentKey].parts : [];
-  
+
   // 處理 named keys for content (ph)
   let contentObj: any = { type: contentKey, parts: contentParts };
   if (contentKey === 'ph') {
