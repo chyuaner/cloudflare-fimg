@@ -1,69 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
+import "../styles/eurl.css";
 ---
-<style>
-    .eurl {
-        display: grid;
-        overflow: scroll;
-    }
-    .eurl-content { margin-left: 3em; }
-    .eurl .eurl-base, .eurl .eurl-content {
-        display: inline-flex;
-        flex-wrap: wrap;
-    }
-    @media (width >= 48rem) {
-        .eurl { display: flex; }
-        .eurl-content { margin-left: 0; }
-        .eurl .eurl-base, .eurl .eurl-content {
-            padding-top: 0.5em;
-            padding-bottom: 0.5em;
-        }
-    }
-    .eurl .eurl-group {
-        align-items: start;
-        width: fit-content;
-        margin: 0 0.5em;
-        /* background-color: darkred; */
-        border-radius: 12px;
-    }
-
-    .eurl .eurl-part {
-        /* padding: 0 0.5em; */
-        /* background-color: rgb(28, 114, 85); */
-        display: inline-table;
-        justify-items: center;
-        text-align: center;
-
-        /* display: table; */
-    }
-    .eurl .eurl-part::before {
-        content: '';
-        font-size: 0.6em;
-        display: table-footer-group;
-        color: oklch(75% 0.006 286.286);
-
-        /* display: table-header-group; */
-        /* line-height: 1em; */
-    }
-    @media (width >= 48rem) {
-        .eurl .eurl-part {
-            margin: 0 0.5em;
-        }
-        .eurl .eurl-group {
-            padding-top: 0.5em;
-            padding-bottom: 0.5em;
-        }
-        .eurl .eurl-part::before {
-            content: ' ';
-        }
-        .eurl .eurl-part[data-url-ptitle]::before {
-            content: '[' attr(data-url-ptitle) ']';
-        }
-    }
-</style>
-
-
 <Layout>
 <section id="intro" class="">
 
@@ -71,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
 
 <article class="grid">
 
-    <div class="eurl bg-neutral p-2 rounded-xl text-neutral-content w-full whitespace-nowrap">
+    <div class="eurl p-2 rounded-xl w-full whitespace-nowrap bg-neutral text-neutral-content">
 
       <span class="eurl-base"><span class="eurl-group">https://fimg.yuaner.tw</span></span>
       <span class="eurl-content">

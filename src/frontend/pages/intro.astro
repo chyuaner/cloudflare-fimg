@@ -1,7 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import "../styles/eurl.css";
 
 ---
+
+<style>
+    .eurl { display: inherit!important; }
+    .eurl-content { margin-left: 0; }
+    .eurl-base, .eurl-content { display: inline-block;}
+    .eurl-group { margin: 0 0.1em; padding-left: 0.1em; padding-right: 0.1em; }
+    /* .eurl-group { margin: 0 0; padding-left: 0; padding-right: 0; } */
+    .eurl-part { margin: 0; }
+</style>
 
 <Layout>
 <section id="intro" class="-mt-[1em]">
@@ -19,7 +29,16 @@ import Layout from '../layouts/Layout.astro';
                     <h2>如何使用</h2>
 
                     <h3>網址結構</h3>
-                    <pre class="overflow-x-auto">https://fimg.yuaner.tw/[canvas-size]/bg/[bg-padding]/[bg-shadow]/[bg-radius]/[bg-bgcolor]/ph/[bgcolor]/[fgcolor]/?text=[text]&filetype=[svg|png]</pre>
+                    <div class="eurl p-4 md:py-0 rounded-md w-full whitespace-nowrap bg-neutral text-neutral-content">
+
+                    <span class="eurl-base"><span class="eurl-group">https://fimg.yuaner.tw</span></span>
+                    <span class="eurl-content">
+                        <span class="eurl-group bg-indigo-600/30 inline" data-url-gtitle="畫布大小">/<span class="eurl-part">[canvas-size]</span></span>
+                        <span class="eurl-group bg-cyan-600/30" data-url-gtitle="邊緣背景">/bg/<span class="eurl-part">[bg-padding]</span>/<span class="eurl-part">[bg-shadow]</span>/<span class="eurl-part">[bg-radius]</span>/<span class="eurl-part">[bg-bgcolor]</span></span>
+                        <span class="eurl-group bg-yellow-600/30" data-url-gtitle="主內容">/ph/<span class="eurl-part">[bgcolor]</span>/<span class="eurl-part">[fgcolor]</span>/?<span class="eurl-part">text=[text]</span></span>
+                        <span class="eurl-group bg-green-600/30" data-url-gtitle="額外設定">&<span class="eurl-part">filetype=[svg|png]</span></span>
+                    </span>
+                    </div>
 
                     <h3>常用範例</h3>
                     <pre class="overflow-x-auto">&lt;h3&gt;一般預留圖&lt;/h3&gt;
