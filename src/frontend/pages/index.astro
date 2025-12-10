@@ -2,7 +2,61 @@
 import Layout from '../layouts/Layout.astro';
 
 ---
+<style>
+    .eurl .eurl-group {
+        display: flex;
+        align-items: start;
+        margin-bottom: 0.5em;
+    }
+    @media (width >= 80rem) {
+        .eurl .eurl-group {
+            display: inline-flex;
+        }
+    }
+    .eurl .eurl-group:not(:first-child) {
+        padding-left: 4em;
+    }
+    @media (width >= 80rem) {
+        .eurl .eurl-group:not(:first-child) {
+            padding-left: 0;
+        }
+    }
+
+    .eurl .eurl-part {
+        margin: 0 0.5em;
+        /* padding: 0 0.5em; */
+        /* background-color: rgb(28, 114, 85); */
+        display: inline-table;
+        justify-items: center;
+        text-align: center;
+
+        /* display: table; */
+    }
+    .eurl .eurl-part[data-url-ptitle]::before {
+        content: '[' attr(data-url-ptitle) ']';
+        /* content: ''; */
+        font-size: 0.6em;
+        display: table-footer-group;
+        color: oklch(75% 0.006 286.286);
+
+        /* display: table-header-group; */
+        /* line-height: 1em; */
+    }
+</style>
+
 
 <Layout>
+    <header class="prose">
+        <h2>Index</h2>
+    </header>
 
+
+<div class="eurl bg-neutral p-4 rounded-xl text-neutral-content w-full overflow-x-auto whitespace-nowrap">
+
+  <span class="eurl-group"><span class="eurl-base">https://fimg.yuaner.tw/</span><span class="eurl-part" data-url-ptitle="Canvas Size">300x200</span></span>
+  <span class="eurl-group">/bg/<span class="eurl-part" data-url-ptitle="Padding">2x3</span>/<span class="eurl-part" data-url-ptitle="Shadow">5</span>/<span class="eurl-part" data-url-ptitle="Color">A5D0E5</span>/<span class="eurl-part" data-url-ptitle="Radius">3</span></span>
+  <span class="eurl-group">/ph/<span class="eurl-part" data-url-ptitle="bgcolor">ff0000,128</span>/<span class="eurl-part" data-url-ptitle="fgcolor">000,255</span>/?<span class="eurl-part">text=Hello+World</span></span>
+  <span class="eurl-group">&<span class="eurl-part">filetype=svg</span></span>
+</div>
+<p>ppppp</p>
 </Layout>
