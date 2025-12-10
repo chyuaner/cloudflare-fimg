@@ -3,14 +3,31 @@ import Layout from '../layouts/Layout.astro';
 import "../styles/eurl.css";
 ---
 <Layout>
-<section id="intro" class="">
-
+<section id="intro" class="prose prose-sm !max-w-none -mt-[1em] border-b-1 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="col-span-2">
+            <!-- <h2>簡介</h2> -->
+            <p>本站提供URL直連網址，可讓你在設計網站時，在已知尺寸的情況下，可快速插入預留圖可以幫助您排版。並在原有的網址結構基礎下，加入分組式的網址結構，預留未來加入其他內容類型的彈性。同時也新增邊緣背景設計的功能，方便用於製作螢幕截圖示意圖、簡報圖美化用途。</p>
+            <p>更多介紹與使用說明，請看 ➤ <a href="/intro">更多介紹</a></p>
+            <h3>常用範例</h3>
+            <pre class="overflow-x-auto">&lt;img src=&quot;https://fimg.yuaner.tw/300x200.svg&quot;&gt; &lt;!-- &#x4E00;&#x822C;&#x9810;&#x7559;&#x5716; --&gt;
+&lt;img src=&quot;https://fimg.yuaner.tw/400x200?text=&#x1F5BC;&#xFE0F;&#x9810;&#x7559;&#x5716;&#x1F609;&amp;filetype=png&quot;&gt; &lt;!-- &#x81EA;&#x8A02;&#x6587;&#x6848;&#x9810;&#x7559;&#x5716; --&gt;
+&lt;img src=&quot;https://fimg.yuaner.tw/400x200/ff0000/FFF/?text=I am red.&quot;&gt; &lt;!-- &#x81EA;&#x8A02;&#x80CC;&#x666F;&#x8272;&#x8207;&#x6587;&#x5B57;&#x984F;&#x8272;&#x7684;&#x9810;&#x7559;&#x5716; --&gt;
+&lt;img src=&quot;https://fimg.yuaner.tw/300x200/bg/5/10/ph.svg&quot;&gt; &lt;!-- &#x5E36;&#x6709;&#x5E36;&#x6709;&#x9670;&#x5F71;&#x7684;&#x900F;&#x660E;&#x908A;&#x7DE3;&#x7684;&#x9810;&#x7559;&#x5716; --&gt;
+&lt;img src=&quot;https://fimg.yuaner.tw/300x200/bg/5/10/4/tpl(drool)/ph.svg&quot;&gt; &lt;!--&#x5E36;&#x6709;&#x5E36;&#x6709;&#x5713;&#x89D2;&#x9670;&#x5F71;&#x7684;&#x5716;&#x6848;&#x908A;&#x7DE3;&#x7684;&#x9810;&#x7559;&#x5716;--&gt;</pre>
+        </div>
+        <div class="prose-img:m-2 hidden lg:flex">
+            <img class="" alt="fakeimg.pl" src="https://fimg.yuaner.tw/440x250/282828/eae0d0">
+        </div>
+    </div>
 </section>
 
 <article class="grid">
+    <header class="prose">
+        <h2 class="">製作佔位圖 （施工中）</h2>
+    </header>
 
-    <div class="eurl p-2 rounded-xl w-full whitespace-nowrap bg-neutral text-neutral-content">
-
+    <div class="eurl my-6 p-2 rounded-xl w-full whitespace-nowrap bg-neutral text-neutral-content">
       <span class="eurl-base"><span class="eurl-group">https://fimg.yuaner.tw</span></span>
       <span class="eurl-content">
           <span class="eurl-group hover:bg-indigo-600/30 inline">/<span class="eurl-part" data-url-ptitle="Canvas Size">300x200</span></span>
@@ -19,7 +36,10 @@ import "../styles/eurl.css";
           <span class="eurl-group hover:bg-green-600/30">&<span class="eurl-part">filetype=svg</span></span>
       </span>
     </div>
-    <p>ppppp</p>
+
+    <article class="prose prose-sm !max-w-none">
+        <p>本頁施工中，請直接看 ➤ <a href="/intro">更多介紹</a></p>
+    </article>
 
 </article>
 </Layout>
