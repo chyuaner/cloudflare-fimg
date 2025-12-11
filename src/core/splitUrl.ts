@@ -51,27 +51,36 @@ export function splitUrl(
   urlStr: string,
   contentKeys: string[] = ['ph', 'code', 'img']
 ) {
-    // ---------- 文字分割 ----------
-    // 先把 path 與 query 分開（不使用 URL 物件）
-    const [rawPath, rawQuery = ''] = urlStr.split('?', 2);
-    // 確保有前導 '/'（外部只會傳入 "/300x200/…" 之類的字串）
-    const pathname = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
+  // ---------- 文字分割 ----------
+  // 先把 path 與 query 分開（不使用 URL 物件）
+  const [rawPath, rawQuery = ''] = urlStr.split('?', 2);
+  // 確保有前導 '/'（外部只會傳入 "/300x200/…" 之類的字串）
+  const pathnameRaw = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
+
+  // ------------------------------------------------------------
+  // ① 正規化：把 "ph.png"、"code.jpg"、"img.svg" 這類寫法
+  //    轉成 "ph/.png"、"code/.jpg"、"img/.svg"
+  // ------------------------------------------------------------
+  const EXT_REG = /\.(png|svg|jpg|jpeg|gif|html)$/i;   // 已在檔案底部宣告，保留
+  const normalizedPath = pathnameRaw.replace(
+    new RegExp(`/(ph|code|img)(${EXT_REG.source})$`, 'i'),
+    (_, key, ext) => `/${key}/${ext}`   // 變成 "/ph/.png" 之類
+  );
+
+  // 後面的流程全部改用 normalizedPath
+    const pathname = normalizedPath;   // 仍保留前導 '/'，方便後續 split
     const segs = pathname.split('/').filter(Boolean);
 
-    // ---------- 解析 query ----------
-    const query = Object.fromEntries(
-      rawQuery
-        .split('&')
-        .filter(Boolean)
-        .map(pair => {
-          const [k, v = ''] = pair.split('=', 2);
-          return [decodeURIComponent(k), decodeURIComponent(v)];
-        })
-    );
-
-  // 正則：需要剔除的副檔名
-  const EXT_REG = /\.(png|svg|jpg|jpeg|gif|html)$/i; // 需要剔除的副檔名
-
+  // ---------- 解析 query ----------
+  const query = Object.fromEntries(
+    rawQuery
+      .split('&')
+      .filter(Boolean)
+      .map(pair => {
+        const [k, v = ''] = pair.split('=', 2);
+        return [decodeURIComponent(k), decodeURIComponent(v)];
+      })
+  );
   // ---------- 先找 canvas ----------
   const first = segs[0];
   const isCanvas = !(first === '' || first === 'bg' || contentKeys.includes(first));
@@ -99,7 +108,12 @@ export function splitUrl(
       ? raw
           .split('/')
           .filter(Boolean)
-          .map(p => p.replace(EXT_REG, ''))   // ← 這裡去除 .png/.svg 等
+          .map(p => p.replace(EXT_REG, ''))   // 去除 .png/.svg 等
+          // ------------------------------------------------------------
+          // 只保留真正屬於當前 block 的內容
+          // 若去除副檔名後恰好是任一 contentKey 或 "bg"，視為非 bg 資料
+          .filter(p => !(p === 'bg' || contentKeys.includes(p)))
+          // ------------------------------------------------------------
       : [];
     blocks[key] = { parts };
   }
