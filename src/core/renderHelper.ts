@@ -144,28 +144,34 @@ export function genBgElement(
     ...wrapperStyle,
   };
 
+  let children: JSX.Element[] = [];
+
   /* -------------------------------------------------
    * 🔹 底層陰影元素（與原元素大小位置完全相同）
    * ------------------------------------------------- */
-  const shadowStyle = {
-    ...inner.props?.style,
-    position: 'absolute' as const,
-    inset: 0,
-    filter: shadow
-      ? `drop-shadow(0 0 ${typeof shadow === 'number' ? `${shadow}px` : shadow} #000)`
-      : undefined,
-    pointerEvents: 'none' as const, // 防止陰影層擋住點擊
-    zIndex: 0,
-  };
+  if (shadow && !['0', 0, '0px'].includes(String(shadow))) {
+    const shadowStyle = {
+      ...inner.props?.style,
+      position: 'absolute' as const,
+      inset: 0,
+      filter: shadow
+        ? `drop-shadow(0 0 ${typeof shadow === 'number' ? `${shadow}px` : shadow} #000)`
+        : undefined,
+      pointerEvents: 'none' as const, // 防止陰影層擋住點擊
+      zIndex: 0,
+    };
 
-  const shadowElement: JSX.Element = {
-    ...inner,
-    props: {
-      ...inner.props,
-      style: shadowStyle,
-      children: inner.props?.children,
-    },
-  };
+    const shadowElement: JSX.Element = {
+      ...inner,
+      props: {
+        ...inner.props,
+        style: shadowStyle,
+        children: inner.props?.children,
+      },
+    };
+
+    children.push(shadowElement);
+  }
 
   /* -------------------------------------------------
    * 🔹 上層原內容（不加陰影，正常顯示）
@@ -182,11 +188,13 @@ export function genBgElement(
     },
   };
 
+  children.push(contentElement);
+
   return {
     type: 'div',
     props: {
       style: containerStyle,
-      children: [shadowElement, contentElement],
+      children,
     },
   };
 }
