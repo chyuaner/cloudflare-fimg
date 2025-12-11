@@ -155,7 +155,7 @@ export function genBgElement(
       position: 'absolute' as const,
       inset: 0,
       filter: shadow
-        ? `drop-shadow(0 0 ${typeof shadow === 'number' ? `${shadow}px` : shadow} #000)`
+        ? `blur(${typeof shadow === 'number' ? `${shadow}px` : shadow})`
         : undefined,
       pointerEvents: 'none' as const, // 防止陰影層擋住點擊
       zIndex: 0,
