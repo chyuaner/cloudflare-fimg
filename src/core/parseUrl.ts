@@ -183,10 +183,10 @@ export function fileType(url: URL, request: Request) {
     } else {
       // 3️⃣ Accept header
       const acceptHeader = request.headers.get('Accept')?.toLowerCase() ?? '';
-      if (acceptHeader.includes('image/png')) {
-        format = 'png';
-      } else if (acceptHeader.includes('image/svg+xml')) {
+      if (acceptHeader.includes('image/svg+xml')) {
         format = 'svg';
+      } else if (acceptHeader.includes('image/png')) {
+        format = 'png';
       } else if (acceptHeader.includes('text/html')) {
         format = 'html';
       }
