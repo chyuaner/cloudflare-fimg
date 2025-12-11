@@ -138,9 +138,6 @@ export function genBgElement(
     ...(padding !== undefined
       ? { padding: typeof padding === 'number' ? `${padding}px` : padding }
       : {}),
-    ...(radius !== undefined
-      ? { borderRadius: typeof radius === 'number' ? `${radius}px` : radius }
-      : {}),
     ...wrapperStyle,
   };
 
