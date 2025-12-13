@@ -1,5 +1,7 @@
 import { handleRequest } from '../src/core/app';
-import { VercelAssetLoader } from '../src/core/assetLoader';
+import { VercelAssetLoader } from '../src/core/loaders/VercelAssetLoader';
+
+import { ImageResponse } from '@vercel/og';
 
 export const config = {
   runtime: 'edge', // Use Vercel Edge Runtime
@@ -14,5 +16,5 @@ export default async function handler(request: Request) {
   // Vercel Edge Functions uses standard Web API Request/Response
   return handleRequest(request, loader, {
     ENABLE_DEBUG: process.env.ENABLE_DEBUG,
-  });
+  }, ImageResponse);
 }

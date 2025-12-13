@@ -2,7 +2,9 @@ import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import path from 'node:path';
 import { handleRequest } from './core/app.js';
-import { NodeAssetLoader } from './core/assetLoader.js';
+import { NodeAssetLoader } from './core/loaders/NodeAssetLoader.js';
+
+import { ImageResponse } from '@cf-wasm/og';
 
 const app = express();
 const port = 3000;
@@ -31,7 +33,7 @@ app.use(async (req, res, next) => {
       ENABLE_DEBUG: process.env.ENABLE_DEBUG,
     };
     
-    const response = await handleRequest(request, loader, env);
+    const response = await handleRequest(request, loader, env, ImageResponse);
 
     // 直接把 Web API Response 轉回 Express 回應
     res.status(response.status);

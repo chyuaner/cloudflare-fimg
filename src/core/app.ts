@@ -1,14 +1,35 @@
-import { ImageResponse } from '@cf-wasm/og';
 import { AssetLoader } from './assetLoader';
 import { splitUrl } from './splitUrl';
 import { parseSize, parseColor, fileType, parseSingleSize, parseColorOrPath } from './parseUrl';
 import { genBgElement, genPhElement, parseTextToElements } from './renderHelper';
 import { renderfullHtmlFromElement } from './renderHtml';
 
+// Define a type that matches the ImageResponse class signature we use
+export type ImageResponseConstructor = new (
+  element: any,
+  options: {
+    width?: number;
+    height?: number;
+    fonts?: {
+      name: string;
+      data: ArrayBuffer;
+      weight: 400; // specific usage
+      style: 'normal'; // specific usage
+    }[];
+    format?: 'svg' | 'png'; // specific usage
+    [key: string]: any;
+  }
+) => Response;
+
 // -----------------------------------------------------------------------------
 // Main Request Handler
 // -----------------------------------------------------------------------------
-export async function handleRequest(request: Request, assetLoader: AssetLoader, env?: Record<string, any>): Promise<Response> {
+export async function handleRequest(
+  request: Request,
+  assetLoader: AssetLoader,
+  env?: Record<string, any>,
+  ImageResponseClass?: ImageResponseConstructor
+): Promise<Response> {
   // ---------------------------------------------------------------------------
   // 設置環境參數
   // ---------------------------------------------------------------------------
@@ -194,7 +215,11 @@ export async function handleRequest(request: Request, assetLoader: AssetLoader, 
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
   } else {
-    const imageResponse = new ImageResponse(finalElement as any, {
+    if (!ImageResponseClass) {
+        throw new Error('ImageResponseClass is required for non-html output');
+    }
+    
+    const imageResponse = new ImageResponseClass(finalElement as any, {
       // 若未提供 sizeParam，寬高會是 undefined，ImageResponse 會自行根據內容決定畫布大小
       ...(hasSize && {
         width: retina ? width! * 2 : width!,
@@ -203,7 +228,7 @@ export async function handleRequest(request: Request, assetLoader: AssetLoader, 
       fonts: [
         {
           name: fontName,
-          data: fontData,
+          data: fontData!, // fontData is checked above
           weight: 400,
           style: 'normal',
         },

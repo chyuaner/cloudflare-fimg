@@ -1,5 +1,6 @@
 import { handleRequest } from "./core/app";
-import { CloudflareAssetLoader } from "./core/assetLoader";
+import { CloudflareAssetLoader } from "./core/loaders/CloudflareAssetLoader";
+import { ImageResponse } from '@cf-wasm/og';
 
 export default {
   async fetch(request, env, ctx): Promise<Response> {
@@ -23,6 +24,6 @@ export default {
 
     // Handle dynamic image generation
     const loader = new CloudflareAssetLoader(env.ASSETS);
-    return handleRequest(request, loader, env);
+    return handleRequest(request, loader, env, ImageResponse);
   },
 } satisfies ExportedHandler<CloudflareBindings>;
