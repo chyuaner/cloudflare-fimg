@@ -38,3 +38,5 @@ lerna-debug.log*
 
 # 保留範例檔案
 !.env.example
+.vercel
+.env*.local
