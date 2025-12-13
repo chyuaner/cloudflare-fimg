@@ -3,6 +3,7 @@ import { splitUrl } from './splitUrl';
 import { parseSize, parseColor, fileType, parseSingleSize, parseColorOrPath } from './parseUrl';
 import { genBgElement, genPhElement, parseTextToElements } from './renderHelper';
 import { renderfullHtmlFromElement } from './renderHtml';
+import { corsMiddleware, cacheControlMiddleware, runMiddlewares } from './middleware';
 
 // Define a type that matches the ImageResponse class signature we use
 export type ImageResponseConstructor = new (
@@ -25,6 +26,22 @@ export type ImageResponseConstructor = new (
 // Main Request Handler
 // -----------------------------------------------------------------------------
 export async function handleRequest(
+  request: Request,
+  assetLoader: AssetLoader,
+  env?: Record<string, any>,
+  ImageResponseClass?: ImageResponseConstructor
+): Promise<Response> {
+  return runMiddlewares(
+    request,
+    [corsMiddleware, cacheControlMiddleware],
+    () => coreHandler(request, assetLoader, env, ImageResponseClass)
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Core Business Logic
+// -----------------------------------------------------------------------------
+async function coreHandler(
   request: Request,
   assetLoader: AssetLoader,
   env?: Record<string, any>,
