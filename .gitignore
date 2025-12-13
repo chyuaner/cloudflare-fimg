@@ -40,3 +40,8 @@ lerna-debug.log*
 !.env.example
 .vercel
 .env*.local
+
+# Next.js
+.next/
+out/
+build/
