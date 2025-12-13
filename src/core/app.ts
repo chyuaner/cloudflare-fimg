@@ -152,7 +152,23 @@ export async function handleRequest(
             throw new Error('bgImgData is null or undefined');
           }
 
-          const base64String = btoa(String.fromCharCode(...new Uint8Array(bgImgData)));
+          // Prevent Maximum call stack size exceeded by avoiding spread operator on large arrays
+          let base64String;
+          if (typeof Buffer !== 'undefined') {
+             base64String = Buffer.from(bgImgData).toString('base64');
+          } else {
+             // Fallback for environments without Buffer (unlikely in Node/CF, but safe)
+             const bytes = new Uint8Array(bgImgData);
+             let binary = '';
+             const len = bytes.byteLength;
+             // Process in chunks to avoid freezing UI (if strictly necessary) or just loop
+             // Simple loop is safer than spread
+             for (let i = 0; i < len; i++) {
+               binary += String.fromCharCode(bytes[i]);
+             }
+             base64String = btoa(binary);
+          }
+          
           const base64Url = `data:${mimeType};base64,${base64String}`;
 
           function getMimeType(path: string): string {
