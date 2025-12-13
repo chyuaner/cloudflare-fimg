@@ -1,4 +1,4 @@
-import type { AssetLoader } from '../assetLoader';
+import type { AssetLoader } from './AssetLoader';
 
 export class NodeAssetLoader implements AssetLoader {
   async loadFont(name: string): Promise<ArrayBuffer> {

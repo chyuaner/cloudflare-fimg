@@ -1,4 +1,4 @@
-import type { AssetLoader } from '../assetLoader';
+import type { AssetLoader } from './AssetLoader';
 
 export class CloudflareAssetLoader implements AssetLoader {
   private assetsFetcher: Fetcher | null;

@@ -1,4 +1,4 @@
-import { AssetLoader } from './assetLoader';
+import { AssetLoader } from './loaders/AssetLoader';
 import { splitUrl } from './splitUrl';
 import { parseSize, parseColor, fileType, parseSingleSize, parseColorOrPath } from './parseUrl';
 import { genBgElement, genPhElement, parseTextToElements } from './renderHelper';
@@ -185,7 +185,7 @@ async function coreHandler(
              }
              base64String = btoa(binary);
           }
-          
+
           const base64Url = `data:${mimeType};base64,${base64String}`;
 
           function getMimeType(path: string): string {
@@ -251,7 +251,7 @@ async function coreHandler(
     if (!ImageResponseClass) {
         throw new Error('ImageResponseClass is required for non-html output');
     }
-    
+
     const imageResponse = new ImageResponseClass(finalElement as any, {
       // 若未提供 sizeParam，寬高會是 undefined，ImageResponse 會自行根據內容決定畫布大小
       ...(hasSize && {
