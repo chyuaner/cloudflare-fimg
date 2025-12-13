@@ -84,7 +84,7 @@ export function splitUrl(
 
   // ---------- 先找 canvas ----------
   const first = segs[0];
-  const isCanvas = !(first === '' || first === 'bg' || contentKeys.includes(first));
+  const isCanvas = !!first && !(first === '' || first === 'bg' || contentKeys.includes(first));
   const canvas = isCanvas ? first.replace(EXT_REG, '') : null;
 
   // ---------- 預設空區塊 ----------
