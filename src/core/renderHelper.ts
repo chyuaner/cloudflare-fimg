@@ -1,5 +1,4 @@
-import React from "react";
-import PhElement from "./components/PhElement";
+import { JSX } from "astro/jsx-runtime";
 
 // -----------------------------------------------------------------------------
 // Emoji / Emote Parsers
@@ -30,38 +29,36 @@ export const parseTextToElements = (
 
     // Text before match
     if (matchIndex > lastIndex) {
-      elements.push(
-        <span key={`text-${lastIndex}`}>
-          {safeText.substring(lastIndex, matchIndex)}
-        </span>
-      );
+      elements.push({
+        type: 'span',
+        props: { children: safeText.substring(lastIndex, matchIndex) }
+      });
     }
 
     // specific discord emote element
-    elements.push(
-        <img
-            key={`emote-${matchIndex}`}
-            src={`https://cdn.discordapp.com/emojis/${emoteId}.png`}
-            width={fontSizeVal}
-            height={fontSizeVal}
-            style={{
+    elements.push({
+        type: 'img',
+        props: {
+            src: `https://cdn.discordapp.com/emojis/${emoteId}.png`,
+            width: fontSizeVal,
+            height: fontSizeVal,
+            style: {
                 margin: '0 2px',
                 verticalAlign: 'middle',
                 objectFit: 'contain'
-            }}
-        />
-    );
+            }
+        }
+    });
 
     lastIndex = matchIndex + matchString.length;
   }
 
   // Process failing text after the last match
   if (lastIndex < safeText.length) {
-    elements.push(
-      <span key={`text-${lastIndex}`}>
-        {safeText.substring(lastIndex)}
-      </span>
-    );
+    elements.push({
+      type: 'span',
+      props: { children: safeText.substring(lastIndex) }
+    });
   }
 
   return elements;
@@ -81,18 +78,27 @@ export function genPhElement(opts: {
   fontName: string;
   fontSize: number;
   text?: string;
-}): React.ReactElement {
+}): JSX.Element {
   const { bgColor, fgColor, fontName, fontSize, text } = opts;
+  const children = text ? parseTextToElements(text, fontSize) : [];
 
-  return (
-    <PhElement
-      bgColor={bgColor}
-      fgColor={fgColor}
-      fontName={fontName}
-      fontSize={fontSize}
-      text={text}
-    />
-  );
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        backgroundColor: bgColor,
+        color: fgColor,
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: `${fontSize}px`,
+        fontFamily: fontName,
+      },
+      children,
+    },
+  };
 }
 
 
@@ -101,7 +107,7 @@ export function genPhElement(opts: {
  * wrapperStyle 讓呼叫端自行決定 CSS，包含邊緣背景等需求。
  */
 export function genBgElement(
-  inner: React.ReactElement<any>,
+  inner: JSX.Element,
   opts: {
     bgColor?: string;
     bgUrl?: string;
@@ -110,7 +116,7 @@ export function genBgElement(
     radius?: number | string;
     wrapperStyle?: Record<string, string | number>;
   } = {}
-): React.ReactElement {
+): JSX.Element {
   const {
     bgColor,
     bgUrl,
@@ -123,8 +129,8 @@ export function genBgElement(
   /* -------------------------------------------------
    * 🔹 建立絕對定位的容器（相對定位）
    * ------------------------------------------------- */
-  const containerStyle: React.CSSProperties = {
-    position: 'relative',
+  const containerStyle = {
+    position: 'relative' as const,
     display: 'flex',
     width: '100%',
     height: '100%',
@@ -139,15 +145,15 @@ export function genBgElement(
     ...wrapperStyle,
   };
 
-  let children: React.ReactElement[] = [];
+  let children: JSX.Element[] = [];
 
   /* -------------------------------------------------
    * 🔹 底層陰影元素（與原元素大小位置完全相同）
    * ------------------------------------------------- */
   if (shadow && !['0', 0, '0px'].includes(String(shadow))) {
-    const shadowStyle: React.CSSProperties = {
+    const shadowStyle = {
       ...inner.props?.style,
-      position: 'absolute',
+      position: 'absolute' as const,
       ...(radius !== undefined
           ? { borderRadius: typeof radius === 'number' ? `${radius}px` : radius }
           : {}),
@@ -155,14 +161,18 @@ export function genBgElement(
       filter: shadow
         ? `drop-shadow(0 0 ${typeof shadow === 'number' ? `${shadow}px` : shadow} #000)`
         : undefined,
-      pointerEvents: 'none', // 防止陰影層擋住點擊
+      pointerEvents: 'none' as const, // 防止陰影層擋住點擊
       zIndex: 0,
     };
 
-    const shadowElement = React.cloneElement(inner, {
-      style: shadowStyle,
-      key: 'shadow',
-    });
+    const shadowElement: JSX.Element = {
+      ...inner,
+      props: {
+        ...inner.props,
+        style: shadowStyle,
+        children: inner.props?.children,
+      },
+    };
 
     children.push(shadowElement);
   }
@@ -170,25 +180,28 @@ export function genBgElement(
   /* -------------------------------------------------
    * 🔹 上層原內容（不加陰影，正常顯示）
    * ------------------------------------------------- */
-  const contentStyle: React.CSSProperties = {
-    ...inner.props?.style,
-    position: 'relative',
-    ...(radius !== undefined
-      ? { borderRadius: typeof radius === 'number' ? `${radius}px` : radius }
-      : {}),
-    zIndex: 1,
+  const contentElement: JSX.Element = {
+    ...inner,
+    props: {
+      ...inner.props,
+      style: {
+        ...inner.props?.style,
+        position: 'relative' as const,
+        ...(radius !== undefined
+          ? { borderRadius: typeof radius === 'number' ? `${radius}px` : radius }
+          : {}),
+        zIndex: 1,
+      },
+    },
   };
-
-  const contentElement = React.cloneElement(inner, {
-    style: contentStyle,
-    key: 'content',
-  });
 
   children.push(contentElement);
 
-  return (
-    <div style={containerStyle}>
-      {children}
-    </div>
-  );
+  return {
+    type: 'div',
+    props: {
+      style: containerStyle,
+      children,
+    },
+  };
 }

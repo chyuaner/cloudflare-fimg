@@ -1,4 +1,3 @@
-import React from "react";
 import { AssetLoader } from './loaders/AssetLoader';
 import { splitUrl } from './splitUrl';
 import { parseSize, parseColor, fileType, parseSingleSize, parseColorOrPath } from './parseUrl';
