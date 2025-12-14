@@ -1,6 +1,6 @@
 import { AssetLoader } from "./loaders/AssetLoader";
 
-// --- 字型簡稱 到 檔案名 的對應表 ---
+// --- 內建字型簡稱 對應表 ---
 const fontFileMap = {
   noto: 'NotoSansTC-Medium.ttf',
   lobster: 'Lobster-Regular.ttf',
@@ -8,21 +8,32 @@ const fontFileMap = {
 } as const;
 
 /**
- * 根據字型簡稱列表（如 ['noto', 'lobster']），載入對應 .ttf 並返回 ImageResponse 所需格式
+ * 根據字型名稱列表（如 ['noto', 'lobster', 'CustomFont.ttf']），
+ * 若名稱在 fontFileMap 中，使用對應檔名；
+ * 否則將該名稱直接視為 .ttf 檔名載入。
+ * 回傳 ImageResponse 所需的 fonts 格式。
  */
 export async function loadFonts(
   assetLoader: AssetLoader,
-  fontNames: (keyof typeof fontFileMap)[]
+  fontNames: string[] // 改為 string[]，不限於 key，允許自訂名稱
 ): Promise<Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }>> {
   const fonts: Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }> = [];
 
   for (const name of fontNames) {
-    const fontFile = fontFileMap[name];
+    // 判斷是否為內建簡稱
+    const isKnownFont = name in fontFileMap;
+
+    // 如果是內建簡稱，用 mapping；否則當作直接檔名
+    const fontFile = isKnownFont ? fontFileMap[name as keyof typeof fontFileMap] : name;
+
+    // 使用 fontNames 中的值作為 `name`，但若為自訂檔名可選擇去掉 .ttf 副檔名
+    const displayName = isKnownFont ? name : name.replace(/\.\w+$/, ''); // 去掉副檔名作為 name
+
     try {
       const data = await assetLoader.loadFont(fontFile);
       if (data) {
         fonts.push({
-          name, // ← 使用簡稱作為 name（如 'noto'）
+          name: displayName,
           data,
           weight: 400,
           style: 'normal',
