@@ -1,8 +1,26 @@
 
 export function renderElementToHtml(elem: any): string {
-  // 這是一個 **極簡** 的遞迴序列化，只支援 div / span / pre 等常見標籤。
-  // 若有更複雜的需求，請自行擴充或改用第三方 library（例如 html-escapes）。
+  if (elem === null || elem === undefined || elem === false) return '';
+  if (typeof elem === 'string' || typeof elem === 'number') return String(elem);
+
   const { type, props } = elem;
+
+  // 0️⃣ 支援 Function Component (例如 PhElement)
+  if (typeof type === 'function') {
+    // 執行 Component Function 取得回傳的 Element
+    const rendered = type(props);
+    return renderElementToHtml(rendered);
+  }
+
+  // 若 type 不是字串（例如 Symbol(react.fragment)），只渲染 children
+  if (typeof type !== 'string') {
+    if (props && props.children) {
+      const kids = Array.isArray(props.children) ? props.children : [props.children];
+      return kids.map((c: any) => renderElementToHtml(c)).join('');
+    }
+    return '';
+  }
+
   const { style, children, ...rest } = props ?? {};
 
   // 1️⃣ 產生 style 字串
