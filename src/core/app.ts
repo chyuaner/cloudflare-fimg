@@ -34,7 +34,8 @@ export async function handleRequest(
 ): Promise<Response> {
   return runMiddlewares(
     request,
-    [corsMiddleware, cacheControlMiddleware],
+    // [corsMiddleware, cacheControlMiddleware],
+    [corsMiddleware],
     () => coreHandler(request, assetLoader, env, ImageResponseClass)
   );
 }
