@@ -268,8 +268,6 @@ export function fileType(url: URL, request: Request) {
         format = 'svg';
       } else if (acceptHeader.includes('image/png')) {
         format = 'png';
-      } else if (acceptHeader.includes('text/html')) {
-        format = 'html';
       }
     }
   }
