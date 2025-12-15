@@ -6,13 +6,30 @@ import { parseTextToElements } from "./components/elementUtils";
 export class Canvas {
   private width?: number;
   private height?: number;
+  private scale: number = 1;
   private phElement: React.ReactElement | null = null;
   private bgElement: React.ReactElement | null = null;
   private watermarkElement: React.ReactElement | null = null;
 
+  setCanvasScale(scale: number) {
+    this.scale = scale;
+    return this;
+  }
+
+  private scalePx(value: string | number | undefined): string | number | undefined {
+    if (value === undefined) return undefined;
+    if (typeof value === 'number') return value * this.scale;
+    if (typeof value === 'string') {
+       return value.replace(/(\d+(\.\d+)?)px/g, (_match, p1) => {
+          return `${parseFloat(p1) * this.scale}px`;
+       });
+    }
+    return value;
+  }
+
   setCanvasSize(width?: number, height?: number) {
-    this.width = width;
-    this.height = height;
+    this.width = width ? width * this.scale : undefined;
+    this.height = height ? height * this.scale : undefined;
     return this;
   }
 
@@ -24,12 +41,15 @@ export class Canvas {
     text?: string;
   }) {
     const { bgColor, fgColor, fontName, fontSize, text } = opts;
+    // Scale fontSize (always number)
+    const scaledFontSize = fontSize * this.scale;
+
     this.phElement = (
       <PhElement
         bgColor={bgColor}
         fgColor={fgColor}
         fontName={fontName}
-        fontSize={fontSize}
+        fontSize={scaledFontSize}
       >
         {text}
       </PhElement>
@@ -54,13 +74,19 @@ export class Canvas {
       wrapperStyle = {},
     } = opts;
 
+    // Apply scaling to padding, shadow, radius if they involve px or are numbers
+    // The user specified: "padding、shadow、radius 因為已經有比例模式了，所以當比例單位計算時不要處理加乘，但如果是以px為單位就需要套用加乘"
+    // My scalePx helper handles number -> multiply, string with px -> multiply px values.
+    // If string has %, it is left alone by scalePx (unless it also has px mixed in?? unlikely for these properties usually).
+    // Note: padding usually "10px 20px" or "5%".
+    
     this.bgElement = (
       <BgElement
         bgColor={bgColor}
         bgUrl={bgUrl}
-        padding={padding}
-        shadow={shadow}
-        radius={radius}
+        padding={this.scalePx(padding)}
+        shadow={this.scalePx(shadow)}
+        radius={this.scalePx(radius)}
         wrapperStyle={wrapperStyle}
       >
         <></>
@@ -81,19 +107,24 @@ export class Canvas {
     }
   ) {
     const { bgColor, fgColor, fontName, fontSize, margin = '10px' } = opts;
+    
+    const scaledFontSize = fontSize * this.scale;
+    // Margin default '10px' should scale.
+    const scaledMargin = this.scalePx(margin);
+
     const content =
-      typeof text === "string" ? parseTextToElements(text, fontSize) : text;
+      typeof text === "string" ? parseTextToElements(text, scaledFontSize) : text;
 
     this.watermarkElement = (
       <div
         style={{
           position: "absolute",
-          bottom: margin,
-          right: margin,
+          bottom: scaledMargin,
+          right: scaledMargin,
           backgroundColor: bgColor || "transparent",
           color: fgColor,
           fontFamily: fontName,
-          fontSize: fontSize,
+          fontSize: scaledFontSize,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

@@ -158,12 +158,15 @@ async function coreHandler(
 
   // Parse query parameters
   const text = url.searchParams.get('text') || (hasSize ? `${width}x${height}` : undefined);
-  const retina = url.searchParams.get('retina') === '1';
+  const retina = url.searchParams.has('retina');
 
   // Generate Image
   const fontSizeVal = Math.floor(Math.min(width ?? 100, height ?? 100) / 5);
 
   const canvas = new Canvas();
+  if (retina) {
+    canvas.setCanvasScale(2);
+  }
   canvas.setCanvasSize(width, height);
   canvas.addPh({
     bgColor,
