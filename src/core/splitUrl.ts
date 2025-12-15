@@ -1,3 +1,12 @@
+// ---------- 輔助函式：正規化段落 ----------
+function normalizePart(p: string): string | null {
+  const clean = p.trim().toLowerCase();
+  if (clean === '' || clean === 'null' || clean === 'undefined') {
+    return null;
+  }
+  return p;                         // 保留原始字串（已去除副檔名的版本會在後面處理）
+}
+
 /**
  * 網址參數拆分器
  *
@@ -68,8 +77,8 @@ export function splitUrl(
   );
 
   // 後面的流程全部改用 normalizedPath
-    const pathname = normalizedPath;   // 仍保留前導 '/'，方便後續 split
-    const segs = pathname.split('/').filter(Boolean);
+  const pathname = normalizedPath;   // 仍保留前導 '/'，方便後續 split
+  const segs = pathname.split('/').filter(Boolean);
 
   // ---------- 解析 query ----------
   const query = Object.fromEntries(
@@ -89,7 +98,7 @@ export function splitUrl(
 
   // ---------- 預設空區塊 ----------
   const blockKeys = ['bg', ...contentKeys];          // 必須先列出 bg
-  const blocks: Record<string, { parts: string[] }> = {};
+  const blocks: Record<string, { parts: (string | null)[] }> = {};
   blockKeys.forEach(k => (blocks[k] = { parts: [] }));
 
   // 記錄實際在路徑中出現過的區塊（即使沒有 parts）
@@ -129,7 +138,7 @@ export function splitUrl(
 
     const raw = path.slice(start, nextIdx);
     // 先 split 成段落，然後把每段可能的副檔名移除
-    const parts = raw
+    const rawParts = raw
       ? raw
           .split('/')
           .filter(Boolean)
@@ -137,9 +146,11 @@ export function splitUrl(
           // 只保留真正屬於當前 block 的內容
           // 若去除副檔名後恰好是任一 contentKey 或 "bg"，視為非 bg 資料
           .filter(p => !(p === 'bg' || contentKeys.includes(p)))
+          .map(normalizePart)
       : [];
 
-    blocks[key] = { parts };
+    // 直接保留 (string | null)[]，不過濾 null，以維持索引位置
+    blocks[key] = { parts: rawParts };
   }
 
   // ---------- 若「主內容」仍是空，嘗試用「簡寫」方式取得 ----------
@@ -147,14 +158,15 @@ export function splitUrl(
   // 只在以下情況下才嘗試：沒有 /ph/ 等明確 contentKey，且 canvas 已確定
   const hasExplicitContent = contentKeys.some(key => foundKeys.has(key));
   if (!hasExplicitContent && canvas !== null) {
-    const contentParts: string[] = [];
+    // 先用 (string | undefined)[] 暫存所有正規化後的結果
+    const contentParts: (string | null)[] = [];
     for (let i = 1; i < segs.length; i++) {
       let seg = segs[i].replace(EXT_REG, '');
       if (seg === 'bg' || contentKeys.includes(seg)) break;
-      contentParts.push(seg);
+      contentParts.push(normalizePart(seg));
     }
     if (contentParts.length > 0) {
-      blocks.ph.parts = contentParts;
+      blocks.ph.parts = contentParts.filter(p => p !== undefined);
       foundKeys.add('ph');
     }
   }
