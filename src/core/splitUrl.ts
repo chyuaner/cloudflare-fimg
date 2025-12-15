@@ -77,8 +77,8 @@ export function splitUrl(
   );
 
   // 後面的流程全部改用 normalizedPath
-  const pathname = normalizedPath;   // 仍保留前導 '/'，方便後續 split
-  const segs = pathname.split('/').filter(Boolean);
+  const rawSegs = normalizedPath.split('/');
+  const segs = rawSegs.slice(1); // 例如 "/a//b" => ["a", "", "b"]
 
   // ---------- 解析 query ----------
   const query = Object.fromEntries(
@@ -105,7 +105,7 @@ export function splitUrl(
   const foundKeys = new Set<string>();
 
   // ---------- 先用 "/bg/"、"/ph/"… 的正式寫法切割 ----------
-  const path = pathname; // 保留前導 '/'
+  const path = normalizedPath; // 保留前導 '/'
 
   for (const key of blockKeys) {
     // 1. 先找 "/key/" 形式（後面還可能有更多段落）
@@ -141,12 +141,15 @@ export function splitUrl(
     const rawParts = raw
       ? raw
           .split('/')
-          .filter(Boolean)
-          .map(p => p.replace(EXT_REG, '')) // 去除副檔名
-          // 只保留真正屬於當前 block 的內容
-          // 若去除副檔名後恰好是任一 contentKey 或 "bg"，視為非 bg 資料
-          .filter(p => !(p === 'bg' || contentKeys.includes(p)))
-          .map(normalizePart)
+          .map(p => {
+            // 空字串直接回傳 null
+            if (p === '') return null;
+            // 去除副檔名
+            const withoutExt = p.replace(EXT_REG, '');
+            // 排除「bg」或 content key 本身（代表下一段的開始）
+            if (withoutExt === 'bg' || contentKeys.includes(withoutExt)) return null;
+            return normalizePart(withoutExt);
+          })
       : [];
 
     // 直接保留 (string | null)[]，不過濾 null，以維持索引位置
