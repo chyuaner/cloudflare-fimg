@@ -1,5 +1,5 @@
 import React from "react";
-import { parseTextToElements } from "../renderHelper";
+import { parseTextToElements } from "./elementUtils";
 
 interface PhElementProps {
   bgColor: string;

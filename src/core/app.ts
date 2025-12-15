@@ -3,7 +3,7 @@ import { AssetLoader } from './loaders/AssetLoader';
 import { loadFonts } from "./loadFonts";
 import { splitUrl } from './splitUrl';
 import { parseSize, parseColor, fileType, parseSingleSize, parseColorOrPath } from './parseUrl';
-import { genBgElement, genPhElement, parseTextToElements } from './renderHelper';
+import { genBgElement, genPhElement } from './renderHelper';
 import { renderfullHtmlFromElement } from './renderHtml';
 import { corsMiddleware, cacheControlMiddleware, runMiddlewares } from './middleware';
 
@@ -120,7 +120,6 @@ async function coreHandler(
 
   // Generate Image
   const fontSizeVal = Math.floor(Math.min(width ?? 100, height ?? 100) / 5);
-  const parsedChildren = parseTextToElements(text, fontSizeVal);
 
   const element = genPhElement({
     bgColor,
