@@ -30,7 +30,7 @@ const fontFileMap = {
  */
 export class FontLoader {
   private assetLoader: AssetLoader;
-  private fontNames: string[] = [];
+  private fontNames: Record<string, true> = {};
 
   constructor(assetLoader: AssetLoader) {
     this.assetLoader = assetLoader;
@@ -42,8 +42,11 @@ export class FontLoader {
    * add(['noto', 'lobster'])
    */
   add(fonts: string | string[]): this {
-    const fontArray = Array.isArray(fonts) ? fonts : [fonts];
-    this.fontNames.push(...fontArray);
+    for (const name of Array.isArray(fonts) ? fonts : [fonts]) {
+      if (!this.fontNames[name]) {
+        this.fontNames[name] = true;
+      }
+    }
     return this; // 鏈式呼叫
   }
 
@@ -53,19 +56,17 @@ export class FontLoader {
   async loadFonts(): Promise<Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }>> {
     const fontsResult: Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }> = [];
 
-    for (const name of this.fontNames) {
-      // 判斷是否為內建簡稱
-      const isKnownFont = name in fontFileMap;
-      // 如果是內建簡稱，用 mapping；否則當作直接檔名
-      const fontFile = isKnownFont ? fontFileMap[name as keyof typeof fontFileMap] : name;
-      // 使用 fontNames 中的值作為 `name`，但若為自訂檔名可選擇去掉 .ttf 副檔名
-      const displayName = isKnownFont ? name : name.replace(/\.\w+$/, '');
+    for (const fontName of Object.keys(this.fontNames)) {
+      const fontFile =
+        fontName in fontFileMap
+          ? fontFileMap[fontName as keyof typeof fontFileMap]
+          : fontName;
 
       try {
         const data = await this.assetLoader.loadFont(fontFile);
         if (data) {
           fontsResult.push({
-            name: displayName,
+            name: fontName, // ← name 保留為簡稱（如 'noto'）
             data,
             weight: 400,
             style: 'normal',
