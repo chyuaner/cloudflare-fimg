@@ -69,7 +69,7 @@ async function coreHandler(
     : pathname;
 
   // ---------------------------------------------------------------------------
-  // Debug route - 測試網址結構解析用
+  // /debug 路由
   // ---------------------------------------------------------------------------
   // Note: Use original pathname (not normalizedPath) to preserve trailing slashes
   if (enableDebug && pathname.startsWith('/debug/')) {
@@ -84,8 +84,40 @@ async function coreHandler(
     });
   }
 
+  // ===========================================================================
+  // 以下都是產圖邏輯
+  // ===========================================================================
+  if (!ImageResponseClass) {
+      throw new Error('ImageResponseClass is required for non-html output');
+  }
+
   // ---------------------------------------------------------------------------
-  // 網址參數處理
+  // /favicon.png 路由
+  // ---------------------------------------------------------------------------
+  if (pathname.startsWith('/favicon.png')) {
+    const text = 'fimg';
+    const fontName = 'noto';
+    const finalElement = genPhElement({
+      bgColor: '#282828',
+      fgColor: '#eae0d0',
+      fontName,
+      fontSize: 45,
+      text,
+    });
+
+    const fonts = await loadFonts(assetLoader, [fontName]);
+    const imageResponse = new ImageResponseClass(finalElement as any, {
+      width: 128,
+      height: 128,
+      fonts,
+      format: format as any,
+    });
+
+    return imageResponse;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 主路由
   // ---------------------------------------------------------------------------
   // Parse the URL for image generation parameters
   // Include query string to ensure consistent parsing with debug route
