@@ -3,7 +3,7 @@ import { AssetLoader } from './loaders/AssetLoader';
 import { loadFonts } from "./loadFonts";
 import { splitUrl } from './splitUrl';
 import { parseSize, parseColor, fileType, parseSingleSize, parseColorOrPathLoad } from './parseUrl';
-import { genBgElement, genPhElement } from './renderHelper';
+import { Canvas } from './Canvas';
 import { renderfullHtmlFromElement } from './renderHtml';
 import { corsMiddleware, cacheControlMiddleware, runMiddlewares } from './middleware';
 
@@ -97,13 +97,16 @@ async function coreHandler(
   if (pathname.startsWith('/favicon.png')) {
     const text = 'fimg';
     const fontName = 'noto';
-    const finalElement = genPhElement({
+    const canvas = new Canvas();
+    canvas.setCanvasSize(128, 128);
+    canvas.addPh({
       bgColor: '#282828',
       fgColor: '#eae0d0',
       fontName,
       fontSize: 45,
       text,
     });
+    const finalElement = canvas.gen();
 
     const fonts = await loadFonts(assetLoader, [fontName]);
     const imageResponse = new ImageResponseClass(finalElement as any, {
@@ -122,7 +125,7 @@ async function coreHandler(
   // Parse the URL for image generation parameters
   // Include query string to ensure consistent parsing with debug route
   const fullPath = normalizedPath + url.search;
-  const { canvas, bg, content } = splitUrl(fullPath);
+  const { canvas: rawCanvasParam, bg, content } = splitUrl(fullPath);
 
   // Load font
   const fontName = url.searchParams.get('font') || 'noto'; // Default to noto
@@ -131,7 +134,7 @@ async function coreHandler(
 
   // canvas (sizeParam) ----------------
   // 若未提供則不設定 width / height，交由 ImageResponse 依內容自動決定畫布大小
-  const sizeParam = canvas ?? null;
+  const sizeParam = rawCanvasParam ?? null;
   // 只有在提供 sizeParam 時才解析尺寸
   const hasSize = !!sizeParam;
   const { width, height } = hasSize ? parseSize(sizeParam) : { width: undefined, height: undefined };
@@ -153,7 +156,9 @@ async function coreHandler(
   // Generate Image
   const fontSizeVal = Math.floor(Math.min(width ?? 100, height ?? 100) / 5);
 
-  const element = genPhElement({
+  const canvas = new Canvas();
+  canvas.setCanvasSize(width, height);
+  canvas.addPh({
     bgColor,
     fgColor,
     fontName,
@@ -162,7 +167,7 @@ async function coreHandler(
   });
 
   // bg --------------------------------
-  // 若 /bg/ 區塊提供了任意參數，使用 genBgElement 包裹
+  // 若 /bg/ 區塊提供了任意參數，使用 addBg 加入
   const hasBgConfig =
     bg.padding !== undefined ||
     bg.shadow !== undefined ||
@@ -193,7 +198,7 @@ async function coreHandler(
       }
     }
 
-    finalElement = genBgElement(element, {
+    canvas.addBg({
         ...bgBackgroundParm,
         // 轉成數值（若是 undefined 則會被忽略）
         ...(paddingX !== undefined || paddingY !== undefined
@@ -204,9 +209,9 @@ async function coreHandler(
         ...(radiusValue !== undefined ? { radius: `${radiusValue}px` } : {}),
         // 若還想自行加入其他 style，可在此追加 wrapperStyle
       });
-  } else {
-    finalElement = element;
   }
+
+  finalElement = canvas.gen();
 
 
   if (format === 'html') {
