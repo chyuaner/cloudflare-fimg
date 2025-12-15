@@ -51,11 +51,6 @@ export class Canvas {
       wrapperStyle = {},
     } = opts;
 
-    if (!this.phElement) {
-      // phElement must be created before wrapping it with BgElement
-      return this;
-    }
-
     this.bgElement = (
       <BgElement
         bgColor={bgColor}
@@ -65,7 +60,7 @@ export class Canvas {
         radius={radius}
         wrapperStyle={wrapperStyle}
       >
-        {this.phElement}
+        <></>
       </BgElement>
     );
 
@@ -73,8 +68,22 @@ export class Canvas {
   }
 
   gen(): React.ReactElement {
+    if (this.bgElement && this.phElement) {
+       // Inject phElement into bgElement
+       // React.cloneElement(element, [props], [...children])
+       // passing undefined props to keep original props of bgElement
+       // passing this.phElement as children to replace <></>
+       return React.cloneElement(this.bgElement, undefined, this.phElement);
+    }
+
     if (this.bgElement) {
-      return this.bgElement;
+        // If only bgElement exists but no phElement?
+        // BgElement requires children to render anything meaningful usually (shadow/content clone)
+        // Check BgElement.tsx: it clones children.
+        // If children is <></>, it clones Fragment? 
+        // <></>.props is empty object. style is undefined.
+        // It should render safely as empty div with background.
+        return this.bgElement;
     }
     
     if (this.phElement) {
