@@ -4,47 +4,92 @@ import { AssetLoader } from "./loaders/AssetLoader";
 const fontFileMap = {
   noto: 'NotoSansTC-Medium.ttf',
   lobster: 'Lobster-Regular.ttf',
-  // 可以持續擴充
 } as const;
 
 /**
+ * 類別：支援鏈式 add 方法，並提供 loadFonts() 來載入字型
+ *
  * 根據字型名稱列表（如 ['noto', 'lobster', 'CustomFont.ttf']），
  * 若名稱在 fontFileMap 中，使用對應檔名；
  * 否則將該名稱直接視為 .ttf 檔名載入。
  * 回傳 ImageResponse 所需的 fonts 格式。
+ *
+ * 使用方法：
+ *
+ *     // 建立物件
+ *     const fontLoader = new FontLoader(assetLoader);
+ *
+ *     // 串連 add 方法
+ *     fontLoader
+ *       .add('noto')
+ *       .add(['lobster', 'MyCustomFont.ttf']);
+ *
+ *     // 最後呼叫 loadFonts 合併載入
+ *     const fonts = await fontLoader.loadFonts();
+ *
+ */
+export class FontLoader {
+  private assetLoader: AssetLoader;
+  private fontNames: string[] = [];
+
+  constructor(assetLoader: AssetLoader) {
+    this.assetLoader = assetLoader;
+  }
+
+  /**
+   * 支援單一字型或多個字型的 add，例如：
+   * add('noto')
+   * add(['noto', 'lobster'])
+   */
+  add(fonts: string | string[]): this {
+    const fontArray = Array.isArray(fonts) ? fonts : [fonts];
+    this.fontNames.push(...fontArray);
+    return this; // 鏈式呼叫
+  }
+
+  /**
+   * 載入所有已 add 的字型，回傳 ImageResponse 所需格式
+   */
+  async loadFonts(): Promise<Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }>> {
+    const fontsResult: Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }> = [];
+
+    for (const name of this.fontNames) {
+      // 判斷是否為內建簡稱
+      const isKnownFont = name in fontFileMap;
+      // 如果是內建簡稱，用 mapping；否則當作直接檔名
+      const fontFile = isKnownFont ? fontFileMap[name as keyof typeof fontFileMap] : name;
+      // 使用 fontNames 中的值作為 `name`，但若為自訂檔名可選擇去掉 .ttf 副檔名
+      const displayName = isKnownFont ? name : name.replace(/\.\w+$/, '');
+
+      try {
+        const data = await this.assetLoader.loadFont(fontFile);
+        if (data) {
+          fontsResult.push({
+            name: displayName,
+            data,
+            weight: 400,
+            style: 'normal',
+          });
+        } else {
+          console.error(`Loaded font data is null: ${fontFile}`);
+        }
+      } catch (e) {
+        console.error(`Font load error (${fontFile}):`, e);
+      }
+    }
+
+    return fontsResult;
+  }
+}
+
+/**
+ * ✅ 保留原始函式介面（向後相容）
+ * 用法：const fonts = await loadFonts(assetLoader, [fontnames]);
  */
 export async function loadFonts(
   assetLoader: AssetLoader,
-  fontNames: string[] // 改為 string[]，不限於 key，允許自訂名稱
+  fontNames: string[]
 ): Promise<Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }>> {
-  const fonts: Array<{ name: string; data: ArrayBuffer; weight: 400; style: 'normal' }> = [];
-
-  for (const name of fontNames) {
-    // 判斷是否為內建簡稱
-    const isKnownFont = name in fontFileMap;
-
-    // 如果是內建簡稱，用 mapping；否則當作直接檔名
-    const fontFile = isKnownFont ? fontFileMap[name as keyof typeof fontFileMap] : name;
-
-    // 使用 fontNames 中的值作為 `name`，但若為自訂檔名可選擇去掉 .ttf 副檔名
-    const displayName = isKnownFont ? name : name.replace(/\.\w+$/, ''); // 去掉副檔名作為 name
-
-    try {
-      const data = await assetLoader.loadFont(fontFile);
-      if (data) {
-        fonts.push({
-          name: displayName,
-          data,
-          weight: 400,
-          style: 'normal',
-        });
-      } else {
-        console.error(`Loaded font data is null: ${fontFile}`);
-      }
-    } catch (e) {
-      console.error(`Font load error (${fontFile}):`, e);
-    }
-  }
-
-  return fonts;
+  // 使用 FontLoader 直接處理
+  return new FontLoader(assetLoader).add(fontNames).loadFonts();
 }
