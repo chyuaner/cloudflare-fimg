@@ -1,34 +1,28 @@
+// Remove BdElement import
 import React from "react";
 import { parseTextToElements } from "./elementUtils";
 
 interface PhElementProps {
-  bgUrl?: string;
-  bgColor?: string;
   fgColor: string;
   fontName: string;
   fontSize: number;
   text?: string;
+  // bgUrl, bgColor are removed from here
 }
 
 const PhElement = ({
-  bgColor,
-  bgUrl,
   fgColor,
   fontName,
   fontSize,
   style = {},
   children,
 }: React.PropsWithChildren<PhElementProps & { style?: React.CSSProperties }>) => {
-  console.log(bgUrl);
-  return (
-    <div
+
+  const main = <div
       style={{
         display: "flex",
         width: "100%",
         height: "100%",
-        ...(bgColor ? { backgroundColor: bgColor } : {}),
-        ...(bgUrl ? { background: `url(${bgUrl})` } : {}),
-        backgroundSize: "100% 100%",
         color: fgColor,
         alignItems: "center",
         justifyContent: "center",
@@ -40,8 +34,9 @@ const PhElement = ({
       {typeof children === "string" || typeof children === "number"
         ? parseTextToElements(String(children), fontSize)
         : children}
-    </div>
-  );
+    </div>;
+
+  return main;
 };
 
 export default PhElement;

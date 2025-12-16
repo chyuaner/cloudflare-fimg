@@ -1,5 +1,6 @@
 import React from "react";
 import PhElement from "./components/PhElement";
+import BdElement from "./components/BdElement";
 import BgElement from "./components/BgElement";
 import { parseTextToElements } from "./components/elementUtils";
 import { AssetLoader } from "./loaders/AssetLoader";
@@ -72,10 +73,9 @@ export class Canvas {
 
     this.fontLoader.add(fontName);
 
-    this.phElement = (
+    // 1. Create content (PhElement)
+    const ph = (
       <PhElement
-        bgColor={bgColor}
-        bgUrl={bgUrl}
         fgColor={fgColor}
         fontName={fontName}
         fontSize={scaledFontSize}
@@ -83,6 +83,17 @@ export class Canvas {
         {text}
       </PhElement>
     );
+
+    // 2. Wrap in Border/Background (BdElement)
+    this.phElement = (
+      <BdElement
+        bgColor={bgColor}
+        bgUrl={bgUrl}
+      >
+        {ph}
+      </BdElement>
+    );
+    
     return this;
   }
 
