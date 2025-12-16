@@ -138,7 +138,7 @@ async function coreHandler(
   // Parse the URL for image generation parameters
   // Include query string to ensure consistent parsing with debug route
   const fullPath = normalizedPath + url.search;
-  const { canvas: rawCanvasParam, bg, content } = splitUrl(fullPath);
+  const { canvas: rawCanvasParam, bg, content, query } = splitUrl(fullPath);
 
   // Load font
   const fontName = url.searchParams.get('font') || 'noto'; // Default to noto
@@ -250,6 +250,11 @@ async function coreHandler(
       height = (innerHeight ?? 0) + (paddingY ?? 0) * 2;
       canvas.setCanvasSize(width, height);
     }
+
+  }
+
+  if (!!query.debug) {
+    canvas.addDebug(splitUrl(fullPath));
 
   }
 

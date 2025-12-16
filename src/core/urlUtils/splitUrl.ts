@@ -7,6 +7,27 @@ function normalizePart(p: string): string | null {
   return p;                         // 保留原始字串（已去除副檔名的版本會在後面處理）
 }
 
+// ---------- 介面定義 ----------
+export interface SplitUrlProps {
+  canvas: string | null;
+  bg: {
+    parts: (string | null)[];
+    padding?: string | null;
+    shadow?: string | null;
+    radius?: string | null;
+    bgcolor?: string | null;
+  };
+  content: {
+    type: string | null;
+    parts: (string | null)[];
+    // 以下屬性只在 ph 內容時存在
+    size?: string | null;
+    bgcolor?: string | null;
+    fgcolor?: string | null;
+  };
+  query: Record<string, string>;
+}
+
 /**
  * 網址參數拆分器
  *

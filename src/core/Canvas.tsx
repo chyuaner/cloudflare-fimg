@@ -5,6 +5,8 @@ import { parseTextToElements } from "./components/elementUtils";
 import { AssetLoader } from "./loaders/AssetLoader";
 import { FontLoader } from "./loaders/loadFonts";
 import WmElement from "./components/WmElement";
+import { SplitUrlProps } from "./urlUtils/splitUrl";
+import DebugElement from "./components/DebugElement";
 
 
 export type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
@@ -24,6 +26,7 @@ export class Canvas {
   private phElement: React.ReactElement | null = null;
   private bgElement: React.ReactElement | null = null;
   private watermarkElement: React.ReactElement | null = null;
+  private debugElement: React.ReactElement | null = null;
 
   private assetLoader: AssetLoader;
   private fontLoader: FontLoader;
@@ -152,6 +155,23 @@ export class Canvas {
     return this;
   }
 
+  addDebug(
+    splitUrl: SplitUrlProps,
+    opts?: {
+      fgColor?: string;
+    }
+  ) {
+    this.fontLoader.add('noto');
+
+    this.debugElement = (
+      <DebugElement
+        splitUrl={splitUrl}
+        fgColor={opts?.fgColor}
+      />
+    );
+    return this;
+  }
+
   loadFonts(): Promise<Font[]> {
     return this.fontLoader.loadFonts();
   }
@@ -185,6 +205,7 @@ export class Canvas {
       >
         {mainElement}
         {this.watermarkElement}
+        {this.debugElement}
       </div>
     );
   }
