@@ -6,6 +6,8 @@ import { parseColorOrPath, parseSingleSize, parseSize } from "./core/urlUtils/pa
 
 export default {
   async fetch(request, env, ctx): Promise<Response> {
+    const enableRedirect = !['false', '0', 0, null, undefined].includes(env?.ENABLE_CF_REDIRECT);
+
     const url = new URL(request.url);
     const pathname = url.pathname;
 
@@ -24,31 +26,33 @@ export default {
       }
     }
 
-    //
-    // 處理結尾斜線
-    const normalizedPath = pathname.endsWith('/') && pathname.length > 1
-    ? pathname.slice(0, -1)
-    : pathname;
-    const fullPath = normalizedPath + url.search;
-    const { canvas, bg, content, query } = splitUrl(fullPath);
-    const shadowValue = bg.shadow ? parseSingleSize(bg.shadow) : 0;
-    const radiusValue = bg.radius ? parseSingleSize(bg.radius) : 0;
-    // 一旦有用到陰影，直接導流到下游主機商
-    if (shadowValue>0) {
-      return fetch(url.toString(), request);
-    }
+    if (enableRedirect) {
+      console.log('enableRedirect');
+      // 處理結尾斜線
+      const normalizedPath = pathname.endsWith('/') && pathname.length > 1
+      ? pathname.slice(0, -1)
+      : pathname;
+      const fullPath = normalizedPath + url.search;
+      const { canvas, bg, content, query } = splitUrl(fullPath);
+      const shadowValue = bg.shadow ? parseSingleSize(bg.shadow) : 0;
+      const radiusValue = bg.radius ? parseSingleSize(bg.radius) : 0;
+      // 一旦有用到陰影，直接導流到下游主機商
+      if (shadowValue>0) {
+        return fetch(url.toString(), request);
+      }
 
-    // 計算畫布大小
-    const { width: origWidth, height: origHeight } = canvas ? parseSize(canvas) : { width: undefined, height: undefined };
-    const { width: innerWidth, height: innerHeight } = content.size ? parseSize(content.size) : { width: undefined, height: undefined };
-    const width = !!origWidth ? origWidth : (!!innerWidth ? innerWidth : undefined);
-    const height = !!origHeight ? origHeight : (!!innerHeight ? innerHeight : undefined);
+      // 計算畫布大小
+      const { width: origWidth, height: origHeight } = canvas ? parseSize(canvas) : { width: undefined, height: undefined };
+      const { width: innerWidth, height: innerHeight } = content.size ? parseSize(content.size) : { width: undefined, height: undefined };
+      const width = !!origWidth ? origWidth : (!!innerWidth ? innerWidth : undefined);
+      const height = !!origHeight ? origHeight : (!!innerHeight ? innerHeight : undefined);
 
-    // 一旦有用到檔案
-    const bgBackground = bg.bgcolor ? parseColorOrPath(bg.bgcolor) : {type: ''};
-    // 而且總大小超過1600*900，直接導流到下游主機商
-    if (!!bgBackground && bgBackground.type == 'tpl' && !!width && !! height && (width*height > 1000000)) {
-      return fetch(url.toString(), request);
+      // 一旦有用到檔案
+      const bgBackground = bg.bgcolor ? parseColorOrPath(bg.bgcolor) : {type: ''};
+      // 而且總大小超過1600*900，直接導流到下游主機商
+      if (!!bgBackground && bgBackground.type == 'tpl' && !!width && !! height && (width*height > 1000000)) {
+        return fetch(url.toString(), request);
+      }
     }
 
     // 使用Cloudflare Workers運算產圖

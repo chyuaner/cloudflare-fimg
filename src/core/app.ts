@@ -61,7 +61,7 @@ async function coreHandler(
   // ---------------------------------------------------------------------------
   const assetLoader = loaders.assetLoader;
   const ImageResponseClass = loaders.ImageResponseClass;
-  const enableDebug = env?.ENABLE_DEBUG === 'true';
+  const enableDebug = !['false', '0', 0, null, undefined].includes(env?.ENABLE_DEBUG);
 
   // ---------------------------------------------------------------------------
   // 主流程
