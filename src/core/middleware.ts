@@ -57,13 +57,17 @@ export const corsMiddleware: Middleware = async (request, next) => {
  * Sets 'public, max-age=3600' for successful (200) responses.
  */
 export const cacheControlMiddleware: Middleware = async (request, next) => {
+  // 本常數是最後修改時間，若本專案有會影響舊有圖片的改動，請更新這個字串
+  const UPDATE_TIME = 'Tue, 16 Dec 2025 23:29:28 GMT';
+
   const response = await next();
-  
+
   if (response.status === 200) {
     // Force set for now to ensure it works, or change logic to overwrite if needed
     // The previous check `!response.headers.has('Cache-Control')` might be failing if ImageResponse sets a default.
-    response.headers.set('Cache-Control', 'public, max-age=3600');
+    response.headers.set('Cache-Control', 'public, max-age=31536000');
+    response.headers.set('Last-Modified', UPDATE_TIME);
   }
-  
+
   return response;
 };
