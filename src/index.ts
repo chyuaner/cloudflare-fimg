@@ -34,7 +34,7 @@ export default {
     const shadowValue = bg.shadow ? parseSingleSize(bg.shadow) : 0;
     const radiusValue = bg.radius ? parseSingleSize(bg.radius) : 0;
     // 一旦有用到陰影或圓角，直接導流到下游主機商
-    if (shadowValue>0 || radiusValue>0) {
+    if (shadowValue>0) {
       return fetch(url.toString(), request);
     }
 
