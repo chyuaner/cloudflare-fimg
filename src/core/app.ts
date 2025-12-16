@@ -256,7 +256,7 @@ async function coreHandler(
   }
 
   const envInfo = environmentInfo as any; // 轉型為 any 以使用 platform
-  if (env?.platform) {
+  if (envInfo?.platform) {
     canvas.addDebug(splitUrl(fullPath), { platform: envInfo.platform });
   }
 
