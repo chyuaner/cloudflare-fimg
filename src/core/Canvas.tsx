@@ -166,6 +166,10 @@ export class Canvas {
     this.debugElement = (
       <DebugElement
         splitUrl={splitUrl}
+        otherInfo={{
+          width: this.width,
+          height: this.height,
+        }}
         fgColor={opts?.fgColor}
       />
     );

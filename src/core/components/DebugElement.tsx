@@ -5,11 +5,13 @@ import { SplitUrlProps } from "../urlUtils/splitUrl";
 
 interface DebugElementProps {
   splitUrl: SplitUrlProps;
+  otherInfo?: object;
   fgColor?: string;
 }
 
 const DebugElement = ({
   splitUrl,
+  otherInfo,
   fgColor='#FFF',
 }: React.PropsWithChildren<DebugElementProps>) => {
 
@@ -41,6 +43,15 @@ const DebugElement = ({
             <li>bgcolor: {splitUrl.content.bgcolor}</li>
             <li>fgcolor: {splitUrl.content.fgcolor}</li>
           </ul>
+          {otherInfo && typeof otherInfo === 'object' && (
+            <ul style={{ flexDirection: "column" }}>
+              {Object.entries(otherInfo)
+                // .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+                .map(([key, value]) => (
+                  <li key={key}>{key}: {String(value)}</li>
+                ))}
+            </ul>
+          )}
         </div>
       </WmElement>
   );
