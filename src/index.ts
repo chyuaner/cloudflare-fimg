@@ -27,7 +27,6 @@ export default {
     }
 
     if (enableRedirect) {
-      console.log('enableRedirect');
       // 處理結尾斜線
       const normalizedPath = pathname.endsWith('/') && pathname.length > 1
       ? pathname.slice(0, -1)
