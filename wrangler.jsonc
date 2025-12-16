@@ -15,16 +15,8 @@
         "enabled": true
     },
     "vars": {
-        "ENABLE_DEBUG": "true",
-        "ENABLE_CF_REDIRECT": "false"
-    },
-    "env": {
-        "production": {
-            "vars": {
-                "ENABLE_DEBUG": "false",
-                "ENABLE_CF_REDIRECT": "true"
-            }
-        }
+        "ENABLE_DEBUG": "false",
+        "ENABLE_CF_REDIRECT": "true"
     }
     /**
      * Smart Placement
