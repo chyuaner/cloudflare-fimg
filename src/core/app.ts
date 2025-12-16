@@ -143,6 +143,24 @@ async function coreHandler(
     });
   }
 
+  if (pathname.startsWith('/404')) {
+    const canvas = new Canvas(assetLoader);
+    const width=800, height=400;
+    canvas.setCanvasSize(width, height);
+
+    const finalElement = canvas.gen404({});
+
+    const fonts = await canvas.loadFonts();
+    const imageResponse = new ImageResponseClass(finalElement as any, {
+      width,
+      height,
+      fonts,
+      format: format as any,
+    });
+
+    return imageResponse;
+  }
+
   // ---------------------------------------------------------------------------
   // 主路由
   // ---------------------------------------------------------------------------

@@ -8,6 +8,7 @@ import { FontLoader } from "./loaders/loadFonts";
 import WmElement from "./components/WmElement";
 import { SplitUrlProps } from "./urlUtils/splitUrl";
 import DebugElement from "./components/DebugElement";
+import D404Element from "./components/D404Element";
 
 
 export type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
@@ -93,7 +94,7 @@ export class Canvas {
         {ph}
       </BdElement>
     );
-    
+
     return this;
   }
 
@@ -211,6 +212,63 @@ export class Canvas {
 
     // Wrap in canvasElement (root container)
     // This allows adding overlays (watermarks, debug info) later
+    return (
+      <div
+        style={{
+          display: "flex",
+          width: this.width || "100%",
+          height: this.height || "100%",
+          position: "relative", // Needed for absolute positioning of watermark
+          // Ensure mainElement takes full space if needed or centers
+          // Usually children handle their own size, but we provide the stage.
+        }}
+      >
+        {mainElement}
+        {this.watermarkElement}
+        {this.debugElement}
+      </div>
+    );
+  }
+
+  gen404(opts: {
+  }) {
+    const fontSize = 18;
+    const fgColor = "#000"
+    const fontName = "noto"
+    // Scale fontSize (always number)
+    const scaledFontSize = fontSize * this.scale;
+
+    this.fontLoader.add(fontName);
+
+    // 1. Create content (PhElement)
+    const content = (
+      <D404Element
+        fgColor={fgColor}
+        fontName={fontName}
+        fontSize={scaledFontSize}
+      />
+    );
+
+    // 2. Wrap in Border/Background (BdElement)
+    const main = (
+      <BdElement
+        bgColor='#FFF'
+      >
+        {content}
+      </BdElement>
+    );
+
+    this.phElement = main;
+
+    this.addBg({
+      bgColor: '#d7e4ef',
+      shadow: '0',
+      radius: '30',
+      padding: '10%',
+    });
+
+    let mainElement = React.cloneElement(this.bgElement, undefined, this.phElement);
+
     return (
       <div
         style={{
