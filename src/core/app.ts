@@ -134,6 +134,15 @@ async function coreHandler(
     return imageResponse;
   }
 
+  if (pathname.startsWith('/favicon.ico')) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        'Location': '/favicon.png',
+      },
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // 主路由
   // ---------------------------------------------------------------------------
