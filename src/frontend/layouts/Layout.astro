@@ -48,6 +48,26 @@ swup.hooks.before('animation:in:start', async () => {
     container.style.height = 'auto';
     container.style.transition = '';
 });
+
+// Update Navbar active state
+swup.hooks.on('page:view', () => {
+    const currentPath = window.location.pathname;
+    const siteHeader = document.getElementById('site-header');
+    // 若 siteHeader 為 null，回傳空的 NodeList，避免 later 的錯誤
+    const tabs = siteHeader
+        ? siteHeader.querySelectorAll('nav[role="tablist"] a[role="tab"]')
+        : document.createDocumentFragment().querySelectorAll(''); // 空 NodeList
+    
+    tabs.forEach(tab => {
+        const tabPath = tab.getAttribute('href');
+        // Simple match, handling potential trailing slash difference if necessary
+        if (tabPath === currentPath || (tabPath !== '/' && currentPath === tabPath + '/')) {
+            tab.classList.add('tab-active');
+        } else {
+            tab.classList.remove('tab-active');
+        }
+    });
+});
 </script>
 
 <!doctype html>
