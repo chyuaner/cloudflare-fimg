@@ -8,12 +8,15 @@ import { fileType, parseColorOrPath, parseSingleSize, parseSize } from "./core/u
    1️⃣ Helper: 讀取 Edge Cache（只在 Workers 環境有效）
    ------------------------------------------------- */
 async function getFromEdgeCache(request: Request): Promise<Response | null> {
-  // `caches` 只在 Cloudflare Workers 中存在
+  // `caches` 僅在 Cloudflare Workers 中存在
   if (typeof caches !== "undefined" && caches?.default) {
     // 完整 URL（含 query）作為快取鍵
-    return await caches.default.match(request);
+    const cached = await caches.default.match(request);
+    // caches.default.match 可能回傳 undefined → 用 null 統一回傳型別
+    return cached ?? null;
   }
-  return null; // 非 Workers（例如在本機測試）直接視為「沒快取」
+  // 非 Workers（例如本機測試）直接視為「沒快取」
+  return null;
 }
 
 /* -------------------------------------------------
