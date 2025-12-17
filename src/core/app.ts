@@ -172,7 +172,7 @@ async function coreHandler(
   const { canvas: rawCanvasParam, bg, content, query } = splitUrl(fullPath);
 
   // Load font
-  const fontName = url.searchParams.get('font') || 'noto'; // Default to noto
+  const fontName = query.font ?? 'noto';
 
   // canvas (sizeParam) ----------------
   // 若未提供則不設定 width / height，交由 ImageResponse 依內容自動決定畫布大小
@@ -205,9 +205,9 @@ async function coreHandler(
   const fgColor = fgPart ? parseColor(fgPart) : '#969696';   // 預設較深的灰
 
   // Parse query parameters
-  const text = url.searchParams.get('text') || (hasSize ? `${width}x${height}` : undefined);
-  const retina = url.searchParams.has('retina');
-  const scaleParam = url.searchParams.get('scale');
+  const text = query.text ?? (hasSize ? `${width}x${height}` : undefined);
+  const retina = Object.prototype.hasOwnProperty.call(query, 'retina');
+  const scaleParam = query.scale;
 
   let scale = 1;
   if (scaleParam) {
