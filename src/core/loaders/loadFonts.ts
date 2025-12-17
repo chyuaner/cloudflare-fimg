@@ -3,7 +3,7 @@ import { AssetLoader } from "./AssetLoader";
 // --- 內建字型簡稱 對應表 ---
 const fontFileMap = {
   noto: 'NotoSansTC-Medium.ttf',
-  lobster: 'Lobster-Regular.ttf',
+  huninn: 'jf-openhuninn-2.1.ttf',
 } as const;
 
 /**
