@@ -2,10 +2,10 @@ import { AssetLoader } from "./AssetLoader";
 
 // --- 內建字型簡稱 對應表 ---
 const fontFileMap = {
+  huninn: 'jf-openhuninn-2.1.ttf',
   noto: 'NotoSansTC-Medium.ttf',
   TaipeiSans: 'TaipeiSansTCBeta-Regular.ttf',
   TaipeiSansB: 'TaipeiSansTCBeta-Bold.ttf',
-  huninn: 'jf-openhuninn-2.1.ttf',
   JasonHandwriting1: 'JasonHandwriting1.ttf',
   JasonHandwriting2: 'JasonHandwriting2.ttf',
   JasonHandwriting3: 'JasonHandwriting3.ttf',

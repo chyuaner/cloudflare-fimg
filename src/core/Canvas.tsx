@@ -234,7 +234,7 @@ export class Canvas {
   }) {
     const fontSize = 18;
     const fgColor = "#000"
-    const fontName = "noto"
+    const fontName = "huninn"
     // Scale fontSize (always number)
     const scaledFontSize = fontSize * this.scale;
 

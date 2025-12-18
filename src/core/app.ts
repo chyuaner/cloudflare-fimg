@@ -107,7 +107,7 @@ async function coreHandler(
   // ---------------------------------------------------------------------------
   if (pathname.startsWith('/favicon.png') || pathname.startsWith('/favicon.ico')) {
     const text = 'fimg';
-    const fontName = 'noto';
+    const fontName = 'huninn';
     const width = 128;
     const height = 128;
     const canvas = new Canvas(assetLoader);
@@ -189,7 +189,7 @@ async function coreHandler(
   const { canvas: rawCanvasParam, bg, content, query } = splitUrl(fullPath);
 
   // Load font
-  const fontName = query.font ?? 'noto';
+  const fontName = query.font ?? 'huninn';
 
   // canvas (sizeParam) ----------------
   // 若未提供則不設定 width / height，交由 ImageResponse 依內容自動決定畫布大小
