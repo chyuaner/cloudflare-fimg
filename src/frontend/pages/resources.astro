@@ -1,5 +1,7 @@
 ---
+import TplCard from '../components/TplCard.astro';
 import Layout from '../layouts/Layout.astro';
+import { PUBLIC_BASE_URL } from 'astro:env/client';
 ---
 
 <Layout>
@@ -7,7 +9,7 @@ import Layout from '../layouts/Layout.astro';
     <section id="outline">
         <h2 class="mt-1">可用素材總覽</h2>
     </section>
-    <section id="fonts">
+    <section id="fonts" class="grid">
         <h2>字體</h2>
 
         <article>
@@ -18,7 +20,7 @@ import Layout from '../layouts/Layout.astro';
                 </ul>
             </header>
             <p>jf-openhuninn-2.1.ttf</p>
-            <p>https://github.com/justfont/open-huninn-font?tab=readme-ov-file#%E5%8A%A0%E7%B2%89%E5%9C%93%E9%83%BD%E5%85%8D%E9%8C%A2</p>
+            <p>https://github.com/justfont/open-huninn-font?tab=readme-ov-file</p>
             <p>https://justfont.com/huninn/</p>
         </article>
 
@@ -69,28 +71,32 @@ import Layout from '../layouts/Layout.astro';
     <section id="bg">
         <h2>背景</h2>
 
-        <article>
+        <section id="gnome">
             <header>
                 <h3>Gnome預設</h3>
                 <p>https://zebreus.github.io/all-gnome-backgrounds/</p>
-                <ul>
-                    <li>adwaita-d</li>
-                    <li>adwaita-l</li>
-                    <li>amber-d</li>
-                    <li>amber-l</li>
-                    <li>blobs-l</li>
-                    <li>drool-d</li>
-                    <li>drool-l</li>
-                    <li>fold-d</li>
-                    <li>fold-l</li>
-                    <li>morphogenesis-d</li>
-                    <li>morphogenesis-l</li>
-                    <li>symbolic-d</li>
-                    <li>symbolic-l</li>
-                </ul>
             </header>
-            <p>https://jasonfonts.max-everyday.com/</p>
-        </article>
+            <article>
+                <p>https://jasonfonts.max-everyday.com/</p>
+            </article>
+    
+            <div class="not-prose grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <TplCard id="adwaita-d" />
+                <TplCard id="adwaita-l" />
+                <TplCard id="amber-d" />
+                <TplCard id="amber-l" />
+                <TplCard id="blobs-l" />
+                <TplCard id="drool-d" />
+                <TplCard id="drool-l" />
+                <TplCard id="fold-d" />
+                <TplCard id="fold-l" />
+                <TplCard id="morphogenesis-d" />
+                <TplCard id="morphogenesis-l" />
+                <TplCard id="symbolic-d" />
+                <TplCard id="symbolic-l" />
+            </div>
+        </section>
+        
     </section>
 </div>
 </Layout>
