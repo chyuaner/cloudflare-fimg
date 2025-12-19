@@ -19,7 +19,9 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
 {/* ======================================================================== */}
 <h2 class="mt-0 mb-0">網址結構</h2>
 
-本站是以 Fake images please? 的基礎下，加入大量功能擴充。若覺得這部份說明太複雜冗長，可直接跳去看 [常用範例](#常用範例) 。
+本站是以 Fake images please? 的基礎下，加入大量功能擴充。
+
+說明太複雜？可直接跳去看 [常用範例](#常用範例) 。
 
 <div class="eurl mt-6 p-2 rounded-xl w-full whitespace-nowrap bg-neutral text-neutral-content">
   <span class="eurl-base"><span class="eurl-group">{PUBLIC_BASE_URL}</span></span>
@@ -79,7 +81,7 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
 <div class="mt-4 eurl eurl-inline p-4 md:py-0 rounded-md w-full whitespace-nowrap bg-neutral text-neutral-content">
 <span class="eurl-base"><span class="eurl-group">{PUBLIC_BASE_URL}</span></span>
 <span class="eurl-content">
-  <span class="eurl-group bg-yellow-600/30" data-url-gtitle="主內容">/ph/<span class="eurl-part">[size]</span>/<span class="eurl-part">[bgcolor]</span>/<span class="eurl-part">[fgcolor]</span>/?<span class="eurl-part">text=[text]</span></span>
+  <span class="eurl-group bg-yellow-600/30" data-url-gtitle="主內容">/<span class="eurl-part">[size]</span>/<span class="eurl-part">[bgcolor]</span>/<span class="eurl-part">[fgcolor]</span>/?<span class="eurl-part">text=[text]</span></span>
   <span class="eurl-group bg-green-600/30" data-url-gtitle="額外設定">&<span class="eurl-part">filetype=[svg|png]</span></span>
 </span>
 </div>
@@ -110,8 +112,8 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
 
 
 {/* ======================================================================== */}
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<div class="border-t border-t-base-content mt-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 -mt-8">
 <div class="col-span-2">
 <article>
 ## 常用範例
@@ -169,4 +171,5 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
 </section>
 </div>
 
+</div>
 </div>
