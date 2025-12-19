@@ -2,7 +2,9 @@
 // import MainData from '../data/main.json'
 
 const { pathname } = Astro.url;
-const currentPath = pathname.slice(1);
+// 移除開頭的「/」與結尾可能的「/」
+// 例如 "/use/" → "use"、"/" → ""、"/intro" → "intro"
+const currentPath = pathname.replace(/^\/|\/$/g, '');
 ---
 <header id="site-header" class="md:flex items-end">
     <div class="flex-1">
