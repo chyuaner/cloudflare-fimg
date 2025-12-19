@@ -15,9 +15,11 @@ title: 關於本站
 import { PUBLIC_BASE_URL } from 'astro:env/client';
 
 {/* ======================================================================== */}
-## 網址結構
+<h2 class="mt-0 mb-0">網址結構</h2>
 
-<div class="eurl p-4 md:py-0 rounded-md w-full whitespace-nowrap bg-neutral text-neutral-content">
+本站是以 Fake images please? 的基礎下，加入大量功能擴充。若覺得這部份說明太複雜冗長，可直接跳去看 [常用範例](#常用範例) 。
+
+<div class="mt-4 eurl p-4 md:py-0 rounded-md w-full whitespace-nowrap bg-neutral text-neutral-content">
 
 <span class="eurl-base"><span class="eurl-group">{PUBLIC_BASE_URL}</span></span>
 <span class="eurl-content">
@@ -28,15 +30,49 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
 </span>
 </div>
 
+基本上分為四大部份：
+- `[畫布大小]`： 直接定義整張圖片最大的大小，以px為單位。選填：若不填寫將會以主內容來決定這張圖的大小。
+- `[邊緣背景]`： 基本上是`/bg/...`開頭，可設定邊緣間距與背景顏色陰影。選填：若不填寫將會以主內容佔據整張圖。
+- `[主內容]`： 設定主要內容的顏色、文字內容。目前僅提供ph(PlaceHolder)類型。
+- `[額外設定]`： 可設定 `filetype=[svg|png]`、`scale=2`、`debug=1`
+
 ### 參數說明
 
-padding、shadow、radius數字的部份，可帶入
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+<div>
+#### 大小相關
+適用於：`padding`、`shadow`、`radius` 的部份
 - `[int]`：會當作整個畫布的%比例來處理
 - `[int]p`：會直接以px為單位
 
-pagging
+適用於`canvas-size`、`size`、`pagging`的部份
 - `[int]x[int]`：
 - `[int]px[int]p`：
+</div>
+
+<div>
+#### Color 顏色
+- Hex 代碼（例：`ff0000`）
+- Hex+Alpha（例：`ff0000,128` 代表 50% 透明度）。
+- 背景圖片id （例：`tpl(drool-l)`）
+</div>
+
+<div>
+#### URL Query 參數
+- 適用於主內容ph(PlaceHolder)類型
+    - `text`：自訂文字內容。
+    - `font`：字體名稱（`huninn`、`noto` 等）。
+- 共通可用參數
+    - `scale=2`：設為 `2` 時使用 2x 像素密度。
+        - `retina=1`：等同於`scale=2`，設為 `1` 時使用 2x 像素密度。
+    - `filetype=png`：控制輸出檔案格式，目前支援 svg、png、ico，預設以svg為主。
+    - `debug=1`：以右下浮水印形式顯示已帶入參數與處理是哪個站台處理的
+
+</div>
+
+</div>
+
 
 ### 基本用法（PlaceHolder = ph）
 <pre>{PUBLIC_BASE_URL}/[size]/[bgcolor]/[fgcolor]/?text=[text]&filetype=[svg|png]</pre>
@@ -56,7 +92,6 @@ pagging
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 <div class="col-span-2">
-<div>
 <article>
 ## 常用範例
 
@@ -77,9 +112,6 @@ pagging
 <img src="https://fimg.yuaner.tw/300x200/bg/5/10/4/tpl(drool)/ph.svg">
 ```
 
-</article>
-
-<article>
 ## 相容 Fake images please? 用法範例
 
 * {PUBLIC_BASE_URL}/300/
@@ -91,18 +123,19 @@ pagging
 * {PUBLIC_BASE_URL}/200x100/?retina=1&text=こんにちは&font=noto
 * {PUBLIC_BASE_URL}/350x200/?text=World&font=lobster
 * {PUBLIC_BASE_URL}/440x230/ff0000,128/000,255/?retina=1&text=Problem?%20%3C%3Apepw%3A989410572514758676%3E
+
 </article>
-</div>
 </div>
 
 {/* ------------------------------------------------------------------------ */}
 
 <div class="lg:pt-12">
 <section role="images" class="grid grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8">
-<div class="second-line-1">
+
+<div class="second-line-1 col-span-2 sm:col-span-1">
 <img class="left" alt="fakeimg.pl" src="/200x100/282828/eae0d0/?retina=1" />
 </div>
-<div class="second-line-2">
+<div class="second-line-2 col-span-2 sm:col-span-1">
 <img class="right" alt="fakeimg.pl" src="/200x100/282828/eae0d0/?retina=1&amp;text=こんにちは&amp;font=noto" />
 </div>
 <div class="third-line col-span-2">
@@ -111,6 +144,7 @@ pagging
 <div class="third-line col-span-2">
 <img alt="fakeimg.pl" src="/440x230/282828/eae0d0/?retina=1&amp;text=Supports emojis! 😋" />
 </div>
+
 </section>
 </div>
 
