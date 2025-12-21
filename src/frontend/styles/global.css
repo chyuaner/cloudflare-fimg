@@ -37,3 +37,21 @@ html, body {
   background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
   background-color: #ffffff00;
 }
+
+/* Custom tab styles for radio + label + tab-content structure */
+/* Only target tabs that use .radio class (not DaisyUI native tabs) */
+
+/* Hide tab-content that follows a label containing .tab.radio */
+.tabs label:has(.tab.radio) ~ .tab-content {
+  display: none;
+}
+
+/* Show tab-content immediately after a label that contains a checked .tab.radio */
+.tabs label:has(.tab.radio:checked) + .tab-content {
+  display: block;
+}
+
+/* Hide tab-content when a later radio in a later label is checked */
+.tabs label:has(.tab.radio:checked) ~ label:has(.tab.radio) ~ .tab-content {
+  display: none;
+}

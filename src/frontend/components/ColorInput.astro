@@ -1,0 +1,50 @@
+---
+const { disabled = false } = Astro.props;
+---
+
+<div class="flex flex-col gap-1">
+    <div class="flex items-center gap-2">
+        <!-- 顏色選擇器 -->
+        <div
+            class="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-200 shadow-sm shrink-0"
+            class:opacity-50={disabled}
+        >
+            <input
+                type="color"
+                value="#"
+                class="absolute -inset-2 w-14 h-14 cursor-pointer"
+                {disabled}
+            />
+        </div>
+
+        <!-- Hex 輸入與 Alpha 滑桿 -->
+        <div class="flex-1 flex flex-col gap-1">
+            <input
+                type="text"
+                value=""
+                placeholder="Hex (e.g. ff0000)"
+                class="input w-full text-sm px-2 py-1 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class:opacity-50={disabled}
+                {disabled}
+            />
+
+            <div class="flex items-center gap-2">
+                <input
+                    type="range"
+                    min="0"
+                    max="255"
+                    value=""
+                    class="flex-1 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    class:cursor-not-allowed={disabled}
+                    {disabled}
+                />
+                <span
+                    class="text-[10px] text-slate-400 w-8 text-right font-mono"
+                    class:text-slate-300={disabled}
+                >
+                    {Math.round((255 / 255) * 100)}%
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
