@@ -326,6 +326,23 @@ import { pathMap } from '../../core/loaders/assets';
 
 <script>
     import { PUBLIC_BASE_URL } from 'astro:env/client';
+    
+    // Configuration & Defaults
+    const CONFIG = {
+        debounceDelay: 1000,
+        defaults: {
+            alpha: '255',
+            scale: '1',
+            shadow: '',
+            radius: '',
+            padding: '',
+            canvasWidth: '',
+            canvasHeight: '',
+            blockWidth: '300',
+            blockHeight: '',
+            embedAlt: 'Image'
+        }
+    };
 
     // Helper to get element by ID with type safety
     function getEl<T extends HTMLElement>(id: string): T | null {
@@ -373,11 +390,11 @@ import { pathMap } from '../../core/loaders/assets';
             const isCanvasSizeEnabled = sections.canvasSize.toggle.checked;
             sections.canvasSize.content.style.display = isCanvasSizeEnabled ? 'block' : 'none';
 
-            // Check if Canvas Size inputs have values
+            // Check if Canvas Size inputs (or defaults) have values
             let hasCanvasValues = false;
             if (isCanvasSizeEnabled) {
-                const w = (form?.elements.namedItem('canvas_width') as HTMLInputElement)?.value;
-                const h = (form?.elements.namedItem('canvas_height') as HTMLInputElement)?.value;
+                const w = (form?.elements.namedItem('canvas_width') as HTMLInputElement)?.value || CONFIG.defaults.canvasWidth;
+                const h = (form?.elements.namedItem('canvas_height') as HTMLInputElement)?.value || CONFIG.defaults.canvasHeight;
                 if (w || h) hasCanvasValues = true;
             }
 
@@ -414,7 +431,7 @@ import { pathMap } from '../../core/loaders/assets';
             const hex = (data[`${prefix}_hex`] as string)?.trim();
             const alpha = data[`${prefix}_alpha`] as string;
             if (!hex) return '';
-            if (alpha && alpha !== '255') return `${hex},${alpha}`;
+            if (alpha && alpha !== CONFIG.defaults.alpha) return `${hex},${alpha}`;
             return hex;
         };
 
@@ -442,8 +459,8 @@ import { pathMap } from '../../core/loaders/assets';
         // 1. Canvas Size
         let canvasHtml = '';
         const isCanvasSizeEnabled = sections.canvasSize.toggle?.checked;
-        const canvasW = data.canvas_width as string;
-        const canvasH = data.canvas_height as string;
+        const canvasW = ((data.canvas_width as string) || CONFIG.defaults.canvasWidth)?.trim();
+        const canvasH = ((data.canvas_height as string) || CONFIG.defaults.canvasHeight)?.trim();
         const hasCanvasValues = canvasW || canvasH;
 
         if (isCanvasSizeEnabled && hasCanvasValues) {
@@ -466,8 +483,8 @@ import { pathMap } from '../../core/loaders/assets';
         let edgeBgHtml = '';
         const isEdgeBgEnabled = sections.edgeBg.toggle?.checked;
         if (isEdgeBgEnabled) {
-             const pw = (data.bg_padding_w || '') as string;
-             const ph = (data.bg_padding_h || '') as string;
+             const pw = ((data.bg_padding_w as string) || CONFIG.defaults.padding)?.trim();
+             const ph = ((data.bg_padding_h as string) || '')?.trim();
              let padding = '';
 
              if (pw && ph) {
@@ -479,8 +496,8 @@ import { pathMap } from '../../core/loaders/assets';
              }
              // NOTE: Removed forced default '15' for padding to allow omission
 
-             const shadow = (data.bg_shadow === '0' || data.bg_shadow === '') ? '' : data.bg_shadow as string;
-             const radius = (data.bg_radius === '0' || data.bg_radius === '') ? '' : data.bg_radius as string;
+             const shadow = (data.bg_shadow === CONFIG.defaults.shadow || data.bg_shadow === '') ? '' : data.bg_shadow as string;
+             const radius = (data.bg_radius === CONFIG.defaults.radius || data.bg_radius === '') ? '' : data.bg_radius as string;
 
              let color = '';
              if (data.bg_type === 'color') color = getColor('bg_color');
@@ -515,9 +532,11 @@ import { pathMap } from '../../core/loaders/assets';
         const phSegments: {value: string, title: string}[] = [];
 
         // Size
+        // If (isCanvasSizeEnabled && hasCanvasValues) -> Block Size disabled.
+        // We use Block Size values if: Canvas Size is NOT enabling full block override.
         if (!(isCanvasSizeEnabled && hasCanvasValues)) {
-            const w = data.ph_width as string;
-            const h = data.ph_height as string;
+            const w = ((data.ph_width as string) || CONFIG.defaults.blockWidth)?.trim();
+            const h = ((data.ph_height as string) || CONFIG.defaults.blockHeight)?.trim();
             let val = '';
 
             if (w && h) val = `${w}x${h}`;
@@ -555,7 +574,7 @@ import { pathMap } from '../../core/loaders/assets';
         const params = new URLSearchParams();
         if (data.text) params.append('text', data.text as string);
         if (data.font) params.append('font', data.font as string);
-        if (data.scale && data.scale !== '1') params.append('scale', data.scale as string);
+        if (data.scale && data.scale !== CONFIG.defaults.scale) params.append('scale', data.scale as string);
         if (data.debug) params.append('debug', '1');
 
         let filetype = data.filetype as string;
@@ -597,7 +616,7 @@ import { pathMap } from '../../core/loaders/assets';
 
         // Update Embeds
         if (embedHtml) embedHtml.innerText = `<img src="${fullUrl}">`;
-        if (embedMarkdown) embedMarkdown.innerText = `![${data.text || 'Image'}](${fullUrl})`;
+        if (embedMarkdown) embedMarkdown.innerText = `![${data.text || CONFIG.defaults.embedAlt}](${fullUrl})`;
 
         // Update Downloads
         if (downloadLinks.svg) downloadLinks.svg.href = fullPath.replace(/filetype=[^&]+/, 'filetype=svg').replace(/\?$/, '') + (fullPath.includes('?') ? '&' : '?') + 'filetype=svg';
@@ -631,7 +650,7 @@ import { pathMap } from '../../core/loaders/assets';
        debounceTimer = setTimeout(() => {
            generateURL();
            debounceTimer = null;
-       }, 1000);
+       }, CONFIG.debounceDelay);
     }
 
     if (form) {
@@ -661,7 +680,32 @@ import { pathMap } from '../../core/loaders/assets';
         });
     }
 
+    function applyDefaultsToForm() {
+        if (!form) return;
+        const mapping: Record<string, string> = {
+            'canvas_width': CONFIG.defaults.canvasWidth,
+            'canvas_height': CONFIG.defaults.canvasHeight,
+            'ph_width': CONFIG.defaults.blockWidth,
+            'ph_height': CONFIG.defaults.blockHeight,
+            'bg_padding_w': CONFIG.defaults.padding,
+            'bg_shadow': CONFIG.defaults.shadow,
+            'bg_radius': CONFIG.defaults.radius,
+            'scale': CONFIG.defaults.scale,
+            'bg_color_alpha': CONFIG.defaults.alpha,
+            'ph_bg_color_alpha': CONFIG.defaults.alpha,
+            'ph_fg_color_alpha': CONFIG.defaults.alpha
+        };
+
+        for (const [name, val] of Object.entries(mapping)) {
+            const input = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+            if (input && val !== undefined && val !== '') {
+                input.value = val;
+            }
+        }
+    }
+
     // Initialize
+    applyDefaultsToForm();
     updateUIState();
     generateURL();
 
