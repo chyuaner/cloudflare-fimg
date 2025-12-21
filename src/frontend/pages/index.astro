@@ -7,6 +7,21 @@ import TplInput from '../components/TplInput.astro';
 import DropdownSelect from '../components/DropdownSelect.astro';
 import { fontFileMap } from '../../core/loaders/loadFonts';
 import { pathMap } from '../../core/loaders/assets';
+
+// Prepare options for DropdownSelect
+const fontOptions = [
+    { label: '預設 (Default)', value: '' },
+    ...Object.keys(fontFileMap).map(key => ({
+        label: key,
+        value: key
+    }))
+];
+
+const tplOptions = Object.keys(pathMap).map(key => ({
+    label: key,
+    value: key,
+    // image: `/assets/tpl/${key}.png` // Example for future use
+}));
 ---
 <Layout>
 <section id="intro" class="prose prose-sm !max-w-none -mt-[1em] border-b-1 mb-6">
@@ -118,7 +133,7 @@ import { pathMap } from '../../core/loaders/assets';
                                             Template
                                         </label>
                                         <div class="tab-content">
-                                            <TplInput name="bg_tpl" options={pathMap} />
+                                            <TplInput name="bg_tpl" options={tplOptions} />
                                         </div>
 
                                         <label class="label pr-4 mb-2">
@@ -173,7 +188,7 @@ import { pathMap } from '../../core/loaders/assets';
                                                 Template
                                             </label>
                                             <div class="tab-content">
-                                                <TplInput name="ph_bg_tpl" options={pathMap} />
+                                                <TplInput name="ph_bg_tpl" options={tplOptions} />
                                             </div>
 
                                             <label class="label pr-4 mb-2">
@@ -215,10 +230,7 @@ import { pathMap } from '../../core/loaders/assets';
                                         <legend class="fieldset-legend">Font</legend>
                                         <DropdownSelect 
                                             name="font" 
-                                            options={[
-                                                { value: '', label: '預設 (Default)' },
-                                                ...Object.keys(fontFileMap).map(key => ({ value: key, label: key }))
-                                            ]}
+                                            options={fontOptions}
                                             placeholder="預設 (Default)"
                                         />
                                     <span class="label">Optional</span>

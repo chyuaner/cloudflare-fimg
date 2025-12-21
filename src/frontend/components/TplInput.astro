@@ -3,22 +3,16 @@ import DropdownSelect from './DropdownSelect.astro';
 
 interface Props {
     name?: string;
-    options?: Record<string, string>;
+    options?: { label: string; value: string; image?: string; description?: string }[];
     disabled?: boolean;
 }
 
-const { name, options = {}, disabled = false } = Astro.props;
-
-// Map templates to options format
-const dropdownOptions = Object.keys(options).map(key => ({
-    value: key,
-    label: key
-}));
+const { name, options = [], disabled = false } = Astro.props;
 ---
 
 <DropdownSelect 
     name={name || ''} 
-    options={dropdownOptions} 
+    options={options} 
     placeholder="Select a template" 
     {disabled}
 />
