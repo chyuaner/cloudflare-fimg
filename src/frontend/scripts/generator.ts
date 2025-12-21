@@ -21,6 +21,13 @@ export function initGenerator() {
         }
     };
 
+    function isIOS() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+               (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1);
+    }
+
+    const forcePngPreview = isIOS();
+
     // Helper to get element by ID with type safety
     function getEl<T extends HTMLElement>(id: string): T | null {
         return document.getElementById(id) as T | null;
@@ -125,91 +132,71 @@ export function initGenerator() {
 
         // 1. Canvas Size
         let canvasHtml = '';
-        const isCanvasSizeEnabled = sections.canvasSize.toggle?.checked;
         const canvasW = ((data.canvas_width as string) || CONFIG.defaults.canvasWidth)?.trim();
         const canvasH = ((data.canvas_height as string) || CONFIG.defaults.canvasHeight)?.trim();
-        const hasCanvasValues = canvasW || canvasH;
+        const isCanvasSizeEnabled = sections.canvasSize.toggle?.checked && (canvasW || canvasH);
 
-        if (isCanvasSizeEnabled && hasCanvasValues) {
+        if (isCanvasSizeEnabled) {
             let val = '';
-            if (canvasW && canvasH) {
-                 val = `${canvasW}x${canvasH}`;
-            } else if (canvasW) {
-                 val = canvasW;
-            } else if (canvasH) {
-                 val = canvasH;
-            }
+            if (canvasW && canvasH) val = `${canvasW}x${canvasH}`;
+            else if (canvasW) val = canvasW;
+            else if (canvasH) val = canvasH;
 
             if (val) {
-                 urlParts.push(val);
-                 canvasHtml = `<span class="eurl-group hover:bg-indigo-600/30 inline">/<span class="eurl-part" data-url-ptitle="Canvas Size">${val}</span></span>`;
+                urlParts.push(val);
+                canvasHtml = `<span class="eurl-group hover:bg-indigo-600/30 inline">/<span class="eurl-part" data-url-ptitle="Canvas Size">${val}</span></span>`;
             }
         }
 
         // 2. Edge Background
         let edgeBgHtml = '';
-        const isEdgeBgEnabled = sections.edgeBg.toggle?.checked;
-        if (isEdgeBgEnabled) {
-             const pw = ((data.bg_padding_w as string) || CONFIG.defaults.padding)?.trim();
-             const ph = ((data.bg_padding_h as string) || '')?.trim();
-             let padding = '';
+        if (sections.edgeBg.toggle?.checked) {
+            const pw = ((data.bg_padding_w as string) || CONFIG.defaults.padding)?.trim();
+            const ph = ((data.bg_padding_h as string) || '')?.trim();
+            let padding = '';
 
-             if (pw && ph) {
-                 padding = (pw === ph) ? pw : `${pw}x${ph}`;
-             } else if (pw) {
-                 padding = pw;
-             } else if (ph) {
-                 padding = `0x${ph}`;
-             }
+            if (pw && ph) padding = (pw === ph) ? pw : `${pw}x${ph}`;
+            else if (pw) padding = pw;
+            else if (ph) padding = `0x${ph}`;
 
-             const shadow = (data.bg_shadow === CONFIG.defaults.shadow || data.bg_shadow === '') ? '' : data.bg_shadow as string;
-             const radius = (data.bg_radius === CONFIG.defaults.radius || data.bg_radius === '') ? '' : data.bg_radius as string;
+            const shadow = (data.bg_shadow === CONFIG.defaults.shadow || data.bg_shadow === '') ? '' : data.bg_shadow as string;
+            const radius = (data.bg_radius === CONFIG.defaults.radius || data.bg_radius === '') ? '' : data.bg_radius as string;
 
-             let color = '';
-             if (data.bg_type === 'color') color = getColor('bg_color');
-             else if (data.bg_type === 'tpl' && data.bg_tpl) color = `tpl(${data.bg_tpl})`;
+            let color = '';
+            if (data.bg_type === 'color') color = getColor('bg_color');
+            else if (data.bg_type === 'tpl' && data.bg_tpl) color = `tpl(${data.bg_tpl})`;
 
-             const segments = [
-                 { value: padding, title: 'Padding' },
-                 { value: shadow, title: 'Shadow' },
-                 { value: radius, title: 'Radius' },
-                 { value: color, title: 'Color' }
-             ];
+            const processed = processSegments([
+                { value: padding, title: 'Padding' },
+                { value: shadow, title: 'Shadow' },
+                { value: radius, title: 'Radius' },
+                { value: color, title: 'Color' }
+            ]);
 
-             const processed = processSegments(segments);
+            if (processed.length > 0) {
+                urlParts.push('bg');
+                processed.forEach(p => urlParts.push(p.value));
 
-             if (processed.length > 0) {
-                 urlParts.push('bg');
-                 processed.forEach(p => urlParts.push(p.value));
-
-                 edgeBgHtml = `<span class="eurl-group hover:bg-cyan-600/30">/bg`;
-                 processed.forEach(p => {
-                     edgeBgHtml += `/<span class="eurl-part" data-url-ptitle="${p.title}">${p.value}</span>`;
-                 });
-                 edgeBgHtml += `</span>`;
-             }
+                edgeBgHtml = `<span class="eurl-group hover:bg-cyan-600/30">/bg`;
+                processed.forEach(p => {
+                    edgeBgHtml += `/<span class="eurl-part" data-url-ptitle="${p.title}">${p.value}</span>`;
+                });
+                edgeBgHtml += `</span>`;
+            }
         }
 
         // 3. Main Content (Placeholder)
-        let phHtml = '';
         const phSegments: {value: string, title: string}[] = [];
-
-        if (!(isCanvasSizeEnabled && hasCanvasValues)) {
+        if (!isCanvasSizeEnabled) {
             const w = ((data.ph_width as string) || CONFIG.defaults.blockWidth)?.trim();
             const h = ((data.ph_height as string) || CONFIG.defaults.blockHeight)?.trim();
-            let val = '';
-
-            if (w && h) val = `${w}x${h}`;
-            else if (w) val = w;
-            else if (h) val = h;
-
+            const val = (w && h) ? `${w}x${h}` : (w || h || '');
             phSegments.push({ value: val, title: 'Block Size' });
         }
 
         let phBg = '';
         if (data.ph_bg_type === 'color') phBg = getColor('ph_bg_color');
         else if (data.ph_bg_type === 'tpl' && data.ph_bg_tpl) phBg = `tpl(${data.ph_bg_tpl})`;
-        
         phSegments.push({ value: phBg, title: 'bgcolor' });
 
         let phFg = '';
@@ -217,11 +204,10 @@ export function initGenerator() {
         phSegments.push({ value: phFg, title: 'fgcolor' });
 
         const processedPh = processSegments(phSegments);
-
         urlParts.push('ph');
         processedPh.forEach(p => urlParts.push(p.value));
 
-        phHtml = `<span class="eurl-group hover:bg-yellow-600/30">/ph`;
+        let phHtml = `<span class="eurl-group hover:bg-yellow-600/30">/ph`;
         processedPh.forEach(p => {
             phHtml += `/<span class="eurl-part" data-url-ptitle="${p.title}">${p.value}</span>`;
         });
@@ -232,10 +218,8 @@ export function initGenerator() {
         if (data.scale && data.scale !== CONFIG.defaults.scale) params.append('scale', data.scale as string);
         if (data.debug) params.append('debug', '1');
 
-        let filetype = data.filetype as string;
-        if (filetype && filetype !== 'null') {
-             params.append('filetype', filetype);
-        }
+        const filetype = data.filetype as string;
+        if (filetype && filetype !== 'null') params.append('filetype', filetype);
 
         const queryString = params.toString();
         if (queryString) {
@@ -246,32 +230,33 @@ export function initGenerator() {
         const fullPath = "/" + urlParts.join("/") + (queryString ? `/?${queryString}` : "");
         const fullUrl = `${PUBLIC_BASE_URL}${fullPath}`;
 
+        // UI Updates
         if (eurlContent) {
-           let html = '';
-           html += canvasHtml;
-           html += edgeBgHtml;
-           html += phHtml;
-           eurlContent.innerHTML = html;
+            eurlContent.innerHTML = canvasHtml + edgeBgHtml + phHtml;
         }
 
         const previewParams = new URLSearchParams(params);
-        previewParams.set('filetype', 'svg');
+        previewParams.set('filetype', forcePngPreview ? 'png' : 'svg');
         const previewUrl = `/${urlParts.join("/")}/?${previewParams.toString()}`;
 
-        if (previewImage) {
-            if (previewImage.src !== previewUrl) {
-                previewLoading?.classList.remove('hidden');
-                previewImage.src = previewUrl;
-            }
+        if (previewImage && previewImage.src !== previewUrl) {
+            previewLoading?.classList.remove('hidden');
+            previewImage.src = previewUrl;
         }
         if (previewUrlDisplay) previewUrlDisplay.textContent = fullUrl;
 
         if (embedHtml) embedHtml.innerText = `<img src="${fullUrl}">`;
         if (embedMarkdown) embedMarkdown.innerText = `![${data.text || CONFIG.defaults.embedAlt}](${fullUrl})`;
 
-        if (downloadLinks.svg) downloadLinks.svg.href = fullPath.replace(/filetype=[^&]+/, 'filetype=svg').replace(/\?$/, '') + (fullPath.includes('?') ? '&' : '?') + 'filetype=svg';
-        if (downloadLinks.png) downloadLinks.png.href = fullPath.replace(/filetype=[^&]+/, 'filetype=png').replace(/\?$/, '') + (fullPath.includes('?') ? '&' : '?') + 'filetype=png';
-        if (downloadLinks.ico) downloadLinks.ico.href = fullPath.replace(/filetype=[^&]+/, 'filetype=ico').replace(/\?$/, '') + (fullPath.includes('?') ? '&' : '?') + 'filetype=ico';
+        const buildDownloadUrl = (type: string) => {
+            const downloadParams = new URLSearchParams(params);
+            downloadParams.set('filetype', type);
+            return `/${urlParts.join("/")}/?${downloadParams.toString()}`;
+        };
+
+        if (downloadLinks.svg) downloadLinks.svg.href = buildDownloadUrl('svg');
+        if (downloadLinks.png) downloadLinks.png.href = buildDownloadUrl('png');
+        if (downloadLinks.ico) downloadLinks.ico.href = buildDownloadUrl('ico');
     }
 
     if (previewImage) {
