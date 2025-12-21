@@ -290,24 +290,53 @@ import TplInput from '../components/TplInput.astro';
         </div>
 
         <div class="lg:col-span-7">
+            <div class="grid gap-4">
 
-            <div class="mockup-browser border-base-300 border w-full">
-                <div class="mockup-browser-toolbar">
-                    <div class="input w-[65%] p-2">http://localhost:4321/800x500/bg/15/10/4/D0EFFE/ph/F5F7F9,128/000,255/?text=Hello World&filetype=svg</div>
-                    <div class="dropdown dropdown-end">
-                    <div tabindex="0" role="button" class="btn m-0">下載▼</div>
-                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                        <li><a>.svg</a></li>
-                        <li><a>.png</a></li>
-                        <li><a>.ico</a></li>
-                    </ul>
+                <section class="mockup-browser border-base-300 border w-full">
+                    <div class="mockup-browser-toolbar">
+                        <span class="loading loading-spinner loading-md"></span>
+                        <div class="input w-[65%] p-2">http://localhost:4321/800x500/bg/15/10/4/D0EFFE/ph/F5F7F9,128/000,255/?text=Hello World&filetype=svg</div>
+                        <div class="dropdown dropdown-end">
+                        <div tabindex="0" role="button" class="btn m-0">下載▼</div>
+                        <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                            <li><a>.svg</a></li>
+                            <li><a>.png</a></li>
+                            <li><a>.ico</a></li>
+                        </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="grid place-content-center p-8 border-t border-base-300 backgroundImg-grid">
-                    <img src="/800x500/bg/15/10/4/D0EFFE/ph/F5F7F9,128/000,255/?text=Hello World&filetype=svg" />
-                </div>
-            </div>
+                    <div class="grid place-content-center p-8 border-t border-base-300 backgroundImg-grid">
+                        <img src="/800x500/bg/15/10/4/D0EFFE/ph/F5F7F9,128/000,255/?text=Hello World&filetype=svg" />
+                    </div>
+                </section>
 
+                <section class="card bg-base-200 shadow-sm">
+                    <div class="card-body">
+                        <header class="md:flex items-center justify-between">
+                            <h2 class="card-title md:flex mb-0">嵌入圖片</h2>
+                        </header>
+                        <!-- name of each tab group should be unique -->
+                        <div class="tabs tabs-lift">
+                        <input type="radio" name="embed" class="tab" aria-label="HTML" />
+                        <div class="tab-content break-all border-base-300 bg-base-100 p-6">
+                            <pre class="text-wrap break-all">&lt;img src=&quot;http://localhost:4321/800x500/bg/15/10/4/D0EFFE/ph/F5F7F9,128/000,255/?text=Hello World&amp;filetype=svg&quot;&gt;</pre>
+                        </div>
+
+                        <input type="radio" name="embed" class="tab" aria-label="Markdown" checked="checked" />
+                        <div class="tab-content break-all border-base-300 bg-base-100 p-6">
+                            <pre class="text-wrap break-all">![Hello World](http://localhost:4321/800x500/bg/15/10/4/D0EFFE/ph/F5F7F9,128/000,255/?text=Hello World&amp;filetype=svg)</pre>
+                        </div>
+
+                        <input type="radio" name="embed" class="tab" aria-label="curl" />
+                        <div class="tab-content break-all border-base-300 bg-base-100 p-6">
+                            <pre class="text-wrap break-all"></pre>
+                        </div>
+
+                        </div>
+                    </div>
+                </section>
+
+            </div>
         </div>
     </div>
 
