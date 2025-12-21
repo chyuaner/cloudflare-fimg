@@ -17,6 +17,21 @@ const swup = new Swup({
     plugins: [new SwupHeadPlugin()]
 });
 
+// Handle generator initialization dynamically
+async function checkAndInitGenerator() {
+    if (document.getElementById('generator-form')) {
+        const { initGenerator } = await import('../scripts/generator');
+        initGenerator();
+    }
+}
+
+// Initial run
+checkAndInitGenerator();
+
+swup.hooks.on('page:view', () => {
+    checkAndInitGenerator();
+});
+
 // Height transition for container
 // swup.hooks.on('visit:start', () => {
 //     const container = document.getElementById('layout-container');
