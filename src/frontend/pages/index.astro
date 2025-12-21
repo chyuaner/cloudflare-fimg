@@ -48,11 +48,19 @@ const tplOptions = Object.entries(pathMap).map(([key, value]) => ({
         <h2 class="">製作佔位圖</h2>
     </header>
 
-    <div role="alert" class="hidden md:grid lg:hidden mb-6 alert alert-info">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    <div role="alert" class="hidden md:grid lg:hidden mb-6 alert alert-info" id="tablet-orientation-alert">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
-        <span>若你是使用平板，建議你將螢幕轉成橫向，會有最好的使用體驗！</span>
+
+        <span>
+            若你是使用平板，建議你將螢幕轉成橫向，會有最好的使用體驗！
+        </span>
+
+        <!-- 關閉按鈕（純原生） -->
+        <button type="button" class="btn btn-sm btn-ghost ml-auto" id="tablet-alert-close" aria-label="關閉提示">✕</button>
     </div>
 
     <!-- eurl section -->
@@ -358,4 +366,42 @@ const tplOptions = Object.entries(pathMap).map(([key, value]) => ({
 <script>
     // Generator initialization logic is now handled in Layout.astro
     // to ensure it re-runs correctly during Swup transitions.
+</script>
+<!-- 原生 JavaScript：關閉 alert -->
+<!-- -------------- CSS：淡出動畫（保留）---------------------- -->
+<style>
+  /* 初始狀態：可見 */
+  #tablet-orientation-alert {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  /* 被隱藏時的樣式 */
+  #tablet-orientation-alert.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+</style>
+
+<!-- -------------- 原生 JS：點擊關閉 → 淡出 ----------------- -->
+<script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('tablet-alert-close');
+    const alertBox = document.getElementById('tablet-orientation-alert');
+
+    if (!closeBtn || !alertBox) return;
+
+    // 點擊關閉按鈕
+    closeBtn.addEventListener('click', () => {
+      // 加入淡出類別，觸發 CSS transition
+      alertBox.classList.add('fade-out');
+
+      // 動畫結束後隱藏元素（避免留下佔位）
+      const onEnd = () => {
+        alertBox.style.display = 'none';   // 完全移除顯示
+        // 依需求也可以在此加上 Tailwind 的 hidden 類別
+        // alertBox.classList.add('hidden');
+        alertBox.removeEventListener('transitionend', onEnd);
+      };
+      alertBox.addEventListener('transitionend', onEnd);
+    });
+  });
 </script>
