@@ -44,12 +44,19 @@ const tplOptions = Object.entries(pathMap).map(([key, value]) => ({
 </section>
 
 <article class="grid">
-    <header class="prose">
+    <header class="mb-6 prose">
         <h2 class="">製作佔位圖</h2>
     </header>
 
+    <div role="alert" class="hidden md:grid lg:hidden mb-6 alert alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>若你是使用平板，建議你將螢幕轉成橫向，會有最好的使用體驗！</span>
+    </div>
+
     <!-- eurl section -->
-    <div class="sticky top-0 eurl my-6 p-2 rounded-xl w-full whitespace-nowrap bg-neutral text-neutral-content z-20 shadow-lg">
+    <div class="sticky top-0 eurl mb-6 p-2 rounded-xl w-full whitespace-nowrap bg-neutral text-neutral-content z-20 shadow-lg">
       <span class="eurl-base"><span class="eurl-group">{PUBLIC_BASE_URL}</span></span>
       <span class="eurl-content" id="eurl-content">
           <!-- Dynamic content will be injected here by JS -->
