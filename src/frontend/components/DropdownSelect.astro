@@ -31,7 +31,7 @@ const selectedOption = options.find(o => o.value === defaultValue);
 const displayLabel = selectedOption ? selectedOption.label : placeholder;
 ---
 
-<div class={`dropdown dropdown-bottom w-full dropdown-select ${className} group`} id={id} data-name={name}>
+<div class={`dropdown dropdown-bottom w-full dropdown-select ${className} group`} id={id} data-name={name} data-placeholder={placeholder}>
   <!-- Native Select: Visible by default, hidden when JS is active -->
   <select 
     name={name} 
@@ -52,7 +52,10 @@ const displayLabel = selectedOption ? selectedOption.label : placeholder;
       role="button" 
       class={`select select-bordered flex items-center justify-between w-full h-auto py-2 min-h-[38px] ${disabled ? 'select-disabled pointer-events-none opacity-50' : ''}`}
     >
-      <span class="selected-label truncate">{displayLabel}</span>
+      <div class="flex items-center gap-3 overflow-hidden">
+        <img src="" alt="" class="selected-img w-8 h-8 object-cover rounded bg-base-200 shrink-0 hidden" />
+        <span class="selected-label truncate">{displayLabel}</span>
+      </div>
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-50 shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
@@ -62,7 +65,7 @@ const displayLabel = selectedOption ? selectedOption.label : placeholder;
         {options.map(opt => (
           <li>
             <button type="button" class="flex items-center gap-3 text-left w-full hover:bg-base-200 focus:bg-primary focus:text-primary-content" data-value={opt.value} data-label={opt.label}>
-              {opt.image && <img src={opt.image} alt="" class="w-10 h-10 object-cover rounded bg-base-200 shrink-0" />}
+              {opt.image && <img src={opt.image} alt="" class="w-10 h-10 object-cover rounded bg-base-200 shrink-0 option-img" />}
               <div class="flex flex-col overflow-hidden">
                 <span class="font-medium truncate">{opt.label}</span>
                 {opt.description && <span class="text-xs opacity-60 truncate">{opt.description}</span>}
@@ -85,15 +88,27 @@ const displayLabel = selectedOption ? selectedOption.label : placeholder;
 
       const nativeSelect = dropdown.querySelector('.native-select') as HTMLSelectElement;
       const label = dropdown.querySelector('.selected-label') as HTMLElement;
+      const selectedImg = dropdown.querySelector('.selected-img') as HTMLImageElement;
       const buttons = dropdown.querySelectorAll('ul button') as NodeListOf<HTMLButtonElement>;
 
       const updateUI = (val: string) => {
         const match = Array.from(buttons).find(b => b.dataset.value === val);
-        if (match && label) {
-          label.textContent = match.dataset.label || '';
+        if (match) {
+          if (label) label.textContent = match.dataset.label || '';
+          
+          const optionImg = match.querySelector('.option-img') as HTMLImageElement;
+          if (selectedImg) {
+            if (optionImg && optionImg.src) {
+              selectedImg.src = optionImg.src;
+              selectedImg.classList.remove('hidden');
+            } else {
+              selectedImg.classList.add('hidden');
+              selectedImg.src = '';
+            }
+          }
         } else if (!val && label) {
-           // Handle placeholder/empty if needed
            label.textContent = dropdown.getAttribute('data-placeholder') || 'Select option...';
+           if (selectedImg) selectedImg.classList.add('hidden');
         }
       };
 
