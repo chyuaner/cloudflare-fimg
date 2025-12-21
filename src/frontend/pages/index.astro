@@ -17,10 +17,10 @@ const fontOptions = [
     }))
 ];
 
-const tplOptions = Object.keys(pathMap).map(key => ({
+const tplOptions = Object.entries(pathMap).map(([key, value]) => ({
     label: key,
     value: key,
-    // image: `/assets/tpl/${key}.png` // Example for future use
+    image: value // Example for future use
 }));
 ---
 <Layout>
@@ -228,8 +228,8 @@ const tplOptions = Object.keys(pathMap).map(key => ({
 
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Font</legend>
-                                        <DropdownSelect 
-                                            name="font" 
+                                        <DropdownSelect
+                                            name="font"
                                             options={fontOptions}
                                             placeholder="預設 (Default)"
                                         />
@@ -252,8 +252,8 @@ const tplOptions = Object.keys(pathMap).map(key => ({
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Scale</legend>
                                 <div class="join w-full">
-                                    <DropdownSelect 
-                                        name="scale" 
+                                    <DropdownSelect
+                                        name="scale"
                                         class="join-item flex-1"
                                         defaultValue="1"
                                         options={[
@@ -345,6 +345,6 @@ const tplOptions = Object.keys(pathMap).map(key => ({
 </Layout>
 
 <script>
-    // Generator initialization logic is now handled in Layout.astro 
+    // Generator initialization logic is now handled in Layout.astro
     // to ensure it re-runs correctly during Swup transitions.
 </script>
