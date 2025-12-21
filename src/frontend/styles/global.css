@@ -114,13 +114,13 @@ html, body {
 /* Dropdown Menu Coverage & Stacking Fixes */
 
 /* 1. Prevent containers from clipping the menu content */
-.card, 
-.card-body, 
-.card > div, 
-.fieldset, 
-.tabs, 
-.tabs-lift, 
-.tab-content, 
+.card,
+.card-body,
+.card > div,
+.fieldset,
+.tabs,
+.tabs-lift,
+.tab-content,
 .collapsible-content,
 .content {
   overflow: visible !important;
@@ -137,11 +137,9 @@ html, body {
 .card { z-index: 1; }
 .card-body { position: relative; }
 
-/* LEVEL 2: The sticky live preview header (Middle-Top) 
+/* LEVEL 2: The live preview header (Middle-Top)
    Must be higher than any active card (100) but lower than menus (1100) */
 .eurl {
-  position: sticky !important;
-  top: 0;
   z-index: 500 !important;
 }
 
