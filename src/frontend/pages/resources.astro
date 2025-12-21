@@ -14,7 +14,7 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
             <li><a href="#bg">背景圖片</a></li>
         </ul>
     </section>
-    <section id="font" class="border-t border-t-base-content mt-8">
+    <section id="font" class="groupborder-t border-t-base-content mt-8">
         <h2>字體</h2>
 
         <div class="group">
@@ -26,8 +26,8 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
                 </header>
                 <div class="lg:flex">
                     <div class="flex-1">
-                        <p>https://github.com/justfont/open-huninn-font?tab=readme-ov-file</p>
-                        <p>https://justfont.com/huninn/</p>
+                        <p class="text-wrap break-all">https://github.com/justfont/open-huninn-font?tab=readme-ov-file</p>
+                        <p class="text-wrap break-all">https://justfont.com/huninn/</p>
                     </div>
                     <FontCard id="huninn" filename="jf-openhuninn-2.1.ttf" />
                 </div>
@@ -43,21 +43,21 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
                     <header>
                         <h4>Noto Sans Traditional Chinese</h4>
                     </header>
-                
-                    <p>https://fonts.google.com/noto/specimen/Noto+Sans+TC</p>
-    
+
+                    <p class="text-wrap break-all">https://fonts.google.com/noto/specimen/Noto+Sans+TC</p>
+
                     <div class="flex-none not-prose flex flex-wrap gap-4">
                     </div>
                     <div class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FontCard id="noto" filename="NotoSansTC-Medium.ttf" />
                     </div>
                 </section>
-        
+
                 <section>
                     <header>
                         <h4>台北黑體 - 翰字鑄造 JT Foundry</h4>
                     </header>
-                    <p>https://sites.google.com/view/jtfoundry/zh-tw</p>
+                    <p class="text-wrap break-all">https://sites.google.com/view/jtfoundry/zh-tw</p>
                     <div class="not-prose grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <FontCard id="TaipeiSans" filename="TaipeiSansTCBeta-Regular.ttf" />
                         <FontCard id="TaipeiSansB" filename="TaipeiSansTCBeta-Bold.ttf" />
@@ -74,7 +74,7 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
                 <header>
                     <h4>清松手寫體</h4>
                 </header>
-                <p>https://jasonfonts.max-everyday.com/</p>
+                <p class="text-wrap break-all">https://jasonfonts.max-everyday.com/</p>
                 <div class="not-prose grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
                     <FontCard id="JasonHandwriting1" />
                     <FontCard id="JasonHandwriting2" />
@@ -98,12 +98,12 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
         <section id="gnome">
             <header>
                 <h3>Gnome預設</h3>
-                <p>https://zebreus.github.io/all-gnome-backgrounds/</p>
+                <p class="text-wrap break-all">https://zebreus.github.io/all-gnome-backgrounds/</p>
             </header>
             <article>
-                <p>https://jasonfonts.max-everyday.com/</p>
+                <p class="text-wrap break-all">https://jasonfonts.max-everyday.com/</p>
             </article>
-    
+
             <div class="not-prose grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <TplCard id="adwaita-d" />
                 <TplCard id="adwaita-l" />
@@ -120,7 +120,7 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
                 <TplCard id="symbolic-l" />
             </div>
         </section>
-        
+
     </section>
 </div>
 </Layout>
