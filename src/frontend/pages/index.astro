@@ -63,14 +63,16 @@ import TplInput from '../components/TplInput.astro';
                                 </div>
                             </header>
 
-                            <fieldset class="fieldset">
-                                <!-- <legend class="fieldset-legend">What is your name?</legend> -->
-                                <label class="input w-full">
-                                    <input type="text" placeholder="300" /><span class="label">px</span>
-                                    x
-                                    <input type="text" placeholder="300" /><span class="label">px</span>
-                                </label>
-                            </fieldset>
+                            <div class="content">
+                                <fieldset class="fieldset">
+                                    <!-- <legend class="fieldset-legend">What is your name?</legend> -->
+                                    <label class="input w-full">
+                                        <input type="text" placeholder="300" /><span class="label">px</span>
+                                        x
+                                        <input type="text" placeholder="300" /><span class="label">px</span>
+                                    </label>
+                                </fieldset>
+                            </div>
                         </div>
                     </section>
 
@@ -84,54 +86,56 @@ import TplInput from '../components/TplInput.astro';
                                 </div>
                             </header>
 
-                            <fieldset class="fieldset">
-                                <legend class="fieldset-legend">Padding</legend>
-                                <label class="input w-full">
-                                    <input type="text" placeholder="300" /><span class="label">px</span>
-                                    x
-                                    <input type="text" placeholder="300" /><span class="label">px</span>
-                                </label>
-                            </fieldset>
-
-                            <fieldset class="fieldset">
-                                <legend class="fieldset-legend">Shadow</legend>
-                                <input type="number" class="input w-full" placeholder="0" />
-                                <p class="label">Optional</p>
-                            </fieldset>
-
-                            <fieldset class="fieldset">
-                                <legend class="fieldset-legend">Radius</legend>
-                                <input type="number" class="input w-full" placeholder="0" />
-                                <p class="label">Optional</p>
-                            </fieldset>
-
-                            <fieldset class="fieldset">
-                                <div class="tabs">
-                                    <legend class="fieldset-legend mr-6">Background</legend>
-                                    <label class="label pr-4">
-                                        <input type="radio" id="bg-color" name="bgcolor-type" class="tab radio" value="color" checked="checked" />
-                                        Color
+                            <div class="content">
+                                <fieldset class="fieldset">
+                                    <legend class="fieldset-legend">Padding</legend>
+                                    <label class="input w-full">
+                                        <input type="text" placeholder="300" /><span class="label">px</span>
+                                        x
+                                        <input type="text" placeholder="300" /><span class="label">px</span>
                                     </label>
-                                    <div class="tab-content">
-                                        <ColorInput />
-                                    </div>
+                                </fieldset>
 
-                                    <label class="label pr-4">
-                                        <input type="radio" id="bg-tpl" name="bgcolor-type" class="tab radio" value="tpl" />
-                                        Template
-                                    </label>
-                                    <div class="tab-content">
-                                        <TplInput />
-                                    </div>
+                                <fieldset class="fieldset">
+                                    <legend class="fieldset-legend">Shadow</legend>
+                                    <input type="number" class="input w-full" placeholder="0" />
+                                    <p class="label">Optional</p>
+                                </fieldset>
 
-                                    <label class="label">
-                                        <input type="radio" id="bg-none" name="bgcolor-type" class="tab radio" value="" />None
-                                    </label>
-                                    <div class="tab-content">
-                                        <ColorInput disabled />
+                                <fieldset class="fieldset">
+                                    <legend class="fieldset-legend">Radius</legend>
+                                    <input type="number" class="input w-full" placeholder="0" />
+                                    <p class="label">Optional</p>
+                                </fieldset>
+
+                                <fieldset class="fieldset">
+                                    <div class="tabs">
+                                        <legend class="fieldset-legend mr-6">Background</legend>
+                                        <label class="label pr-4">
+                                            <input type="radio" id="bg-color" name="bgcolor-type" class="tab radio" value="color" checked="checked" />
+                                            Color
+                                        </label>
+                                        <div class="tab-content">
+                                            <ColorInput />
+                                        </div>
+
+                                        <label class="label pr-4">
+                                            <input type="radio" id="bg-tpl" name="bgcolor-type" class="tab radio" value="tpl" />
+                                            Template
+                                        </label>
+                                        <div class="tab-content">
+                                            <TplInput />
+                                        </div>
+
+                                        <label class="label">
+                                            <input type="radio" id="bg-none" name="bgcolor-type" class="tab radio" value="" />None
+                                        </label>
+                                        <div class="tab-content">
+                                            <ColorInput disabled />
+                                        </div>
                                     </div>
-                                </div>
-                            </fieldset>
+                                </fieldset>
+                            </div>
                         </div>
                     </section>
 
