@@ -22,7 +22,7 @@ export function initGenerator() {
     };
 
     function isIOS() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
                (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1);
     }
 
@@ -35,8 +35,8 @@ export function initGenerator() {
 
     function getInputs(containerId: string): NodeListOf<HTMLInputElement | HTMLSelectElement> {
         const container = getEl(containerId);
-        return (container 
-            ? container.querySelectorAll('input, select') 
+        return (container
+            ? container.querySelectorAll('input, select')
             : document.querySelectorAll('should-not-match')) as unknown as NodeListOf<HTMLInputElement | HTMLSelectElement>;
     }
 
@@ -333,7 +333,7 @@ export function initGenerator() {
             const input = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
             if (input && val !== undefined && val !== '') {
                 input.value = val;
-                
+
                 // Trigger change event so any custom component listeners can update their UI
                 input.dispatchEvent(new Event('change', { bubbles: true }));
             }
