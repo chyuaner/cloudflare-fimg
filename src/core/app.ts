@@ -141,7 +141,7 @@ async function coreHandler(
       const pngArrayBuffer = await new Response(pngResp.body).arrayBuffer();
       const pngUint8 = new Uint8Array(pngArrayBuffer);
       const icoUint8 = encodeIco(pngUint8, width ?? 0, height ?? 0);
-      return new Response(icoUint8, {
+      return new Response(icoUint8 as any, {
         status: 200,
         headers: {
           'Content-Type': 'image/x-icon'
@@ -333,7 +333,7 @@ async function coreHandler(
     const icoUint8 = encodeIco(pngUint8, width ?? 0, height ?? 0);
 
     // 3️⃣ 回傳 ICO
-    return new Response(icoUint8, {
+    return new Response(icoUint8 as any, {
       status: 200,
       headers: {
         'Content-Type': 'image/x-icon'
