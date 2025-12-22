@@ -59,6 +59,11 @@ export class FontLoader {
       if (!this.fontNames[name]) {
         this.fontNames[name] = true;
       }
+
+      // 如果是使用僅英文的lobster，就直接加入最接近的中文字體
+      if (name == 'lobster') {
+        this.add('NotoSerifB');
+      }
     }
     return this; // 鏈式呼叫
   }
