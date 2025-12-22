@@ -13,7 +13,8 @@ const fontOptions = [
     { label: '預設 (Default)', value: '' },
     ...Object.keys(fontFileMap).map(key => ({
         label: key,
-        value: key
+        value: key,
+        fontId: key
     }))
 ];
 
