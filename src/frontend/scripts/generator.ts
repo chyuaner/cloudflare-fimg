@@ -237,7 +237,7 @@ export function initGenerator() {
         const params = new URLSearchParams();
         if (data.text) params.append('text', data.text as string);
         if (data.font) params.append('font', data.font as string);
-        if (data.scale && data.scale !== CONFIG.defaults.scale) params.append('scale', data.scale as string);
+        if (data.scale && data.scale !== '1') params.append('scale', data.scale as string);
         if (data.debug) params.append('debug', '1');
 
         const filetype = data.filetype as string;
