@@ -9,7 +9,7 @@ const path = Astro.url.pathname.replace(/\//g, '') || 'index';
 const { title } = Astro.props;
 ---
 <script>
-import Swup from 'swup'; 
+import Swup from 'swup';
 import SwupHeadPlugin from '@swup/head-plugin';
 
 const swup = new Swup({
@@ -51,7 +51,7 @@ swup.hooks.on('page:view', () => {
 //     container.style.height = 'auto';
 //     const targetHeight = container.offsetHeight;
 //     container.style.height = currentHeight;
-    
+
 //     // Force reflow
 //     container.offsetHeight;
 
@@ -75,7 +75,7 @@ swup.hooks.on('page:view', () => {
     const tabs = siteHeader
         ? siteHeader.querySelectorAll('nav[role="tablist"] a[role="tab"]')
         : document.createDocumentFragment().querySelectorAll(''); // 空 NodeList
-    
+
     tabs.forEach(tab => {
         const tabPath = tab.getAttribute('href');
         // Simple match, handling potential trailing slash difference if necessary
