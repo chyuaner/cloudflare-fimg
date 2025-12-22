@@ -83,7 +83,10 @@ export function splitUrl(
 ) {
   // ---------- 文字分割 ----------
   // 先把 path 與 query 分開（不使用 URL 物件）
-  const [rawPath, rawQuery = ''] = urlStr.split('?', 2);
+  const qIdx = urlStr.indexOf('?');
+  const rawPath = qIdx === -1 ? urlStr : urlStr.slice(0, qIdx);
+  const rawQuery = qIdx === -1 ? '' : urlStr.slice(qIdx + 1);
+
   // 確保有前導 '/'（外部只會傳入 "/300x200/…" 之類的字串）
   const pathnameRaw = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
 

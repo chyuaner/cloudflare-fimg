@@ -1,9 +1,11 @@
+import React from "react";
+
 // -----------------------------------------------------------------------------
 // Emoji / Emote Parsers
 // -----------------------------------------------------------------------------
 
-// Regex for Discord emotes: <:name:id>
-const DISCORD_EMOTE_REGEX = /<:(\w+):(\d+)>/g;
+// Regex for Discord emotes: <:name:id> or <a:name:id>
+const DISCORD_EMOTE_REGEX = /<(a?):(\w+):(\d+)>/g;
 
 export const parseTextToElements = (
   /** 可能為 undefined，若無則視為空字串 */ text: string | undefined,
@@ -23,7 +25,8 @@ export const parseTextToElements = (
   for (const match of matches) {
     const matchIndex = match.index!;
     const matchString = match[0];
-    const emoteId = match[2]; // Capturing group 2 is ID
+    const isAnimated = match[1] === 'a';
+    const emoteId = match[3]; // Capturing group 3 is ID
 
     // Text before match
     if (matchIndex > lastIndex) {
@@ -35,16 +38,19 @@ export const parseTextToElements = (
     }
 
     // specific discord emote element
+    const ext = isAnimated ? 'gif' : 'png';
     elements.push(
         <img
             key={`emote-${matchIndex}`}
-            src={`https://cdn.discordapp.com/emojis/${emoteId}.png`}
-            width={fontSizeVal}
-            height={fontSizeVal}
+            src={`https://cdn.discordapp.com/emojis/${emoteId}.${ext}`}
+            width={safeFontSize}
+            height={safeFontSize}
             style={{
                 margin: '0 2px',
                 verticalAlign: 'middle',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                width: `${safeFontSize}px`,
+                height: `${safeFontSize}px`,
             }}
         />
     );
@@ -63,3 +69,4 @@ export const parseTextToElements = (
 
   return elements;
 };
+
