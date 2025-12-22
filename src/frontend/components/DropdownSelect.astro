@@ -24,7 +24,7 @@ const {
   defaultValue = '',
   placeholder = 'Select option...',
   class: className = '',
-  disabled = false
+  disabled = false,
 } = Astro.props;
 
 // Find the initial label
@@ -62,7 +62,15 @@ const displayLabel = selectedOption ? selectedOption.label : placeholder;
       </svg>
     </div>
     {!disabled && (
-      <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[100] w-full p-2 shadow-xl border border-base-300 max-h-160 overflow-y-auto mt-1">
+      <div
+        class={`
+          dropdown-content bg-base-100 rounded-box z-[100] p-2 shadow-xl border border-base-300 mt-1
+           max-h-140 sm:max-h-80 lg:max-h-140 xl:max-h-80 w-full overflow-auto
+        `}>
+      <ul
+        tabindex="0"
+        class={`menu max-h-none sm:max-h-80 lg:max-h-none xl:max-h-80 w-full`}
+      >
         {options.map(opt => (
           <li>
             <button type="button" class="flex items-center gap-3 text-left w-full hover:bg-base-200 focus:bg-primary focus:text-primary-content" data-value={opt.value} data-label={opt.label}>
@@ -73,12 +81,12 @@ const displayLabel = selectedOption ? selectedOption.label : placeholder;
                   {opt.description && <span class="text-xs opacity-60 truncate">{opt.description}</span>}
                 </div>
                 {opt.fontId && <span class="truncate"><img class="scale-250 max-w-48" src={`/400x100/FFF,0/?font=${encodeURIComponent(opt.fontId)}&text=${encodeURIComponent(opt.fontId)}`} alt={opt.fontId} /></span>}
-
               </div>
             </button>
           </li>
         ))}
       </ul>
+      </div>
     )}
   </div>
 </dropdown-select>
