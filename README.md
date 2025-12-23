@@ -5,6 +5,8 @@ Fimg (Fake Image Generator) 預留圖產生站
 
 並在不破壞Fake images please原有網址結構設計的情況下，加入分組式的網址結構，大幅加入功能擴充的彈性。
 
+![Screenshot](.readme/screenshot.png)
+
 ## 專案特色
 * 本專案兼容Cloudflare Worker、Vercel (Serverless Edge)原生運行設計，
     - [x] 不使用 nodejs_compat compatibility_flags 相容模式，以取得最佳效能與穩定性
