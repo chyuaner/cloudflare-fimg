@@ -226,10 +226,14 @@ export function initGenerator() {
         phSegments.push({ value: phFg, title: 'fgcolor' });
 
         const processedPh = processSegments(phSegments);
-        urlParts.push('ph');
+        const isPhFirst = urlParts.length === 0;
+
+        if (!isPhFirst) {
+            urlParts.push('ph');
+        }
         processedPh.forEach(p => urlParts.push(p.value));
 
-        let phHtml = `<span class="eurl-group hover:bg-yellow-600/30">/ph`;
+        let phHtml = `<span class="eurl-group hover:bg-yellow-600/30">${isPhFirst ? '' : '/ph'}`;
         processedPh.forEach(p => {
             phHtml += `/<span class="eurl-part" data-url-ptitle="${p.title}">${p.value}</span>`;
         });
