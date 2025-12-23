@@ -188,6 +188,9 @@ async function coreHandler(
   const fullPath = normalizedPath + url.search;
   const { canvas: rawCanvasParam, bg, content, query } = splitUrl(fullPath);
 
+  let responseStatus = 200; // Initial status, will change to 400 if any asset loading fails
+
+
   // Load font
   const fontName = query.font ?? 'huninn';
 
@@ -216,7 +219,11 @@ async function coreHandler(
   const fgPart = content.fgcolor ?? null;
 
   // 若沒有提供顏色或讀取範本失敗，使用預設值
-  const bgPreParm = (bgPart ? await parseColorOrPathLoad(bgPart, assetLoader) : null) ?? {type: 'color' as const, value: '#cccccc'};
+  const bgPreParmRaw = bgPart ? await parseColorOrPathLoad(bgPart, assetLoader) : null;
+  if (bgPart && !bgPreParmRaw) {
+    responseStatus = 422;
+  }
+  const bgPreParm = bgPreParmRaw ?? {type: 'color' as const, value: '#cccccc'};
   const bgParm = bgBackgroundToParm(bgPreParm);
   const fgColor = fgPart ? parseColor(fgPart) : '#969696';   // 預設較深的灰
 
@@ -268,6 +275,9 @@ async function coreHandler(
     const radiusValue = bg.radius ? parseSingleSize(bg.radius, { width, height }) : undefined;
 
     const bgBackground = bg.bgcolor ? await parseColorOrPathLoad(bg.bgcolor, assetLoader) : undefined;
+    if (bg.bgcolor && !bgBackground) {
+        responseStatus = 422;
+    }
     let bgBackgroundParm = bgBackgroundToParm(bgBackground);
 
     canvas.addBg({
@@ -308,7 +318,7 @@ async function coreHandler(
     });
 
     return new Response(html, {
-      status: 200,
+      status: responseStatus,
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
   } 
@@ -334,7 +344,7 @@ async function coreHandler(
 
     // 3️⃣ 回傳 ICO
     return new Response(icoUint8 as any, {
-      status: 200,
+      status: responseStatus,
       headers: {
         'Content-Type': 'image/x-icon'
       },
@@ -355,6 +365,7 @@ async function coreHandler(
       }),
       fonts,
       format: format as any,
+      status: responseStatus,
     });
 
     return imageResponse;
