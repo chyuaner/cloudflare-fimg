@@ -129,7 +129,7 @@ export function initGenerator() {
             const hex = (data[`${prefix}_hex`] as string)?.trim();
             const alpha = data[`${prefix}_alpha`] as string;
             if (!hex) return '';
-            if (alpha && alpha !== CONFIG.defaults.alpha) return `${hex},${alpha}`;
+            if (alpha && alpha !== '255') return `${hex},${alpha}`;
             return hex;
         };
 
