@@ -31,7 +31,7 @@ const { name = 'color', disabled = false, valHex = '', valAlpha = '255' } = Astr
                     name={`${name}_hex`}
                     value={valHex}
                     placeholder="Hex (e.g. ff0000)"
-                    class="input w-full text-sm px-2 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 hex-input"
+                    class="input w-full text-sm px-2 py-1 rounded-md hex-input"
                     class:opacity-50={disabled}
                     {disabled}
                 />
@@ -43,12 +43,12 @@ const { name = 'color', disabled = false, valHex = '', valAlpha = '255' } = Astr
                         min="0"
                         max="255"
                         value={valAlpha}
-                        class="flex-1 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 alpha-input"
+                        class="flex-1 h-1.5 bg-neutral rounded-lg appearance-none cursor-pointer accent-blue-600 alpha-input"
                         class:cursor-not-allowed={disabled}
                         {disabled}
                     />
                     <span
-                        class="text-[10px] text-slate-400 w-8 text-right font-mono alpha-display"
+                        class="text-[10px] w-8 text-right alpha-display"
                         class:text-slate-300={disabled}
                     >
                         {Math.round((parseInt(valAlpha) / 255) * 100)}%
