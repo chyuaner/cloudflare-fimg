@@ -1,6 +1,6 @@
 {
     "name": "node-fimg-generator",
-    "type": "module",
+    "version": "2.0.0",
     "scripts": {
         "dev": "concurrently \"npm run dev:astro\" \"npm run dev:worker\"",
         "dev:astro": "astro dev",
