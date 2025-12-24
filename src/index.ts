@@ -112,16 +112,20 @@ export default {
       }
     }
 
+
     // -------------------------------------------------
     // C-2. SPA Fallback for /generator (Cloudflare Workers)
     // -------------------------------------------------
     if (pathname === '/generator' || pathname.startsWith('/generator/')) {
        if (env.ASSETS) {
          try {
+
            // Rewrite to serve the static entry file
-           // Assuming Astro builds defaults to folders: /generator/index.html
-           const spaRequest = new Request(new URL('/generator/index.html', request.url), request);
+           // Using directory path /generator/ (which resolves to index.html) to avoid 307 redirects
+           const targetUrl = new URL('/generator/', request.url);
+           const spaRequest = new Request(targetUrl, request);
            const response = await env.ASSETS.fetch(spaRequest);
+           
            if (response.status === 200) {
              return response;
            }
