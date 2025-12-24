@@ -18,7 +18,7 @@ app.use(express.static(publicDir));
 // --------------------------------------------------
 // SPA Fallback for /generator/*
 // --------------------------------------------------
-app.get('/generator/*', (req, res, next) => {
+app.get(/\/generator\/.*/, (req, res, next) => {
   // Check if it's a file request (has extension); if so, pass to next() (static handler or error)
   if (path.extname(req.path)) {
     return next();
