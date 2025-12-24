@@ -75,7 +75,7 @@ export default defineConfig({
             const isBgPhPattern = /^\/(bg|ph)\/.*$/;
 
             // 3️⃣ 白名單（目前列出 /404、/favicon.png、/favicon.ico）
-            const whitelist = new Set(['/404', '/favicon.png', '/favicon.ico']);
+            const whitelist = new Set(['/err404', '/favicon.png', '/favicon.ico']);
             const isWhitelisted = whitelist.has(pathname);
 
             if (isNumberPattern.test(pathname) || isBgPhPattern.test(pathname) || isWhitelisted) {
