@@ -268,6 +268,13 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
 }
 
 export function genEurl(result: SplitUrlProps): string {
+    // Helper to remove trailing nulls
+    const cleanParts = (parts: (string | null)[]) => {
+        const lastIdx = parts.findLastIndex(p => p !== null);
+        if (lastIdx === -1) return [];
+        return parts.slice(0, lastIdx + 1);
+    };
+
     // 1. canvasGroup
     const canvasGroup = result.canvas
         ? `<span class="eurl-group hover:bg-indigo-600/30 inline">/` +
@@ -277,16 +284,14 @@ export function genEurl(result: SplitUrlProps): string {
 
     // 2. bgGroup
     const bgTitles = ['Padding', 'Shadow', 'Radius', 'Color'];
+    const bgParts = cleanParts(result.bg.parts);
+    
     let bgGroup = '';
-    // Use bg.parts directly to ensure we render exactly what's needed, including intermediate nulls
-    if (result.bg.parts && result.bg.parts.length > 0) {
-        const partsHtml = result.bg.parts.map((p, i) => {
+    if (bgParts.length > 0) {
+        const partsHtml = bgParts.map((p, i) => {
              const title = bgTitles[i] || 'Unknown';
-             // If p is null but exists in parts array, it's a placeholder "null" in URL
-             // If p is explicitly null in our parts array (string | null)[], we render string "null" or nothing?
-             // The logic in buildUrl is usually: join with '/'. null -> "null".
-             // We want to visualize "null" probably?
-             const val = p === null ? 'null' : p;
+             // Render empty string for null to show // in URL instead of /null/
+             const val = p === null ? '' : p; 
              return `<span class="eurl-part" data-url-ptitle="${title}">${val}</span>`;
         }).join('/');
         
@@ -297,7 +302,7 @@ export function genEurl(result: SplitUrlProps): string {
     let contentGroup = '';
     const isCanvas = !!result.canvas;
     
-    // Determine titles based on presence of canvas (which shifts parts)
+    // Determine titles
     let contentTitles: string[];
     if (isCanvas) {
          contentTitles = ['bgcolor', 'fgcolor'];
@@ -305,34 +310,42 @@ export function genEurl(result: SplitUrlProps): string {
          contentTitles = ['Block Size', 'bgcolor', 'fgcolor'];
     }
 
-    if (result.content.parts && result.content.parts.length > 0) {
-          const partsHtml = result.content.parts.map((p, i) => {
-               const title = contentTitles[i] || 'Unknown';
-               const val = p === null ? 'null' : p;
-               return `<span class="eurl-part" data-url-ptitle="${title}">${val}</span>`;
-          }).join('/');
-          
-          const type = result.content.type || 'ph';
-          // Check if we need to prepend /ph/ (implicit if it's start? handled by caller normally)
-          // But genEurl just returns HTML string.
-          // Usually we want /ph/...
-          
-          // Query
-          const queryStr = new URLSearchParams(result.query).toString();
-          const queryHtml = queryStr
-            ? `/?<span class="eurl-part">${queryStr.replace(/&/g, '&amp;<wbr>')}</span>`
-            : '';
+    const contentParts = cleanParts(result.content.parts);
+    const hasContentParts = contentParts.length > 0;
+    const type = result.content.type; // 'ph' or null
+    
+    // Query
+    const queryStr = new URLSearchParams(result.query).toString();
+    const queryHtml = queryStr
+        ? `/?<span class="eurl-part">${queryStr.replace(/&/g, '&amp;<wbr>')}</span>`
+        : '';
 
-          // If content parts exist, we usually start with /ph/
-          // UNLESS it's the very first block? But here we have modular groups.
-          // If canvasGroup is empty, does bgGroup exist? 
-          // If canvasGroup is empty, and bgGroup empty, then /ph/ might be optional in some parsers if simple size?
-          // But let's stick to standard explicit /ph/ for visualization clarity.
+    // Decide if we show content group
+    // Show if: 1. Parts exist OR 2. Type exists (explicit /ph) OR 3. Query exists (attach to content logic)
+    if (hasContentParts || type || queryStr) {
+          let partsHtml = '';
+          if (hasContentParts) {
+              partsHtml = contentParts.map((p, i) => {
+                   const title = contentTitles[i] || 'Unknown';
+                   const val = p === null ? '' : p;
+                   return `<span class="eurl-part" data-url-ptitle="${title}">${val}</span>`;
+              }).join('/');
+          }
+
+          // Construct prefix: /type/parts...
+          // If type is null (implicit), and we have parts, we usually just show /parts... 
+          // (e.g. /300x200/color - wait, implicit content usually implies PH structure?)
+          // But strict generator usually uses /ph.
+          // If parts is empty, do we show /? 
+          // e.g. /ph/?query...
           
-          // Wait, logic: if NO parts, do we show /ph? 
-          // If type exists, we show it.
+          let prefix = '';
+          if (type) prefix = `/${type}`;
           
-          contentGroup = `<span class="eurl-group hover:bg-yellow-600/30">/${type}/${partsHtml}${queryHtml}</span>`;
+          let middle = '';
+          if (partsHtml) middle = `/${partsHtml}`;
+          
+          contentGroup = `<span class="eurl-group hover:bg-yellow-600/30">${prefix}${middle}${queryHtml}</span>`;
     }
 
     return `${canvasGroup}${bgGroup}${contentGroup}`;
