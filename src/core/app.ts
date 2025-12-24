@@ -162,7 +162,7 @@ async function coreHandler(
     });
   }
 
-  if (pathname.startsWith('/404')) {
+  if (pathname.startsWith('/err404')) {
     const canvas = new Canvas(assetLoader);
     const width=800, height=400;
     canvas.setCanvasSize(width, height);
