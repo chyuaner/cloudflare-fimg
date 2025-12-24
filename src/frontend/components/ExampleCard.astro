@@ -3,6 +3,7 @@ const { src, url, enableEurl=false, title} = Astro.props;
 import { PUBLIC_BASE_URL } from 'astro:env/client';
 import { splitUrl } from '../../core/utils/splitUrl';
 import { genEurl } from '../scripts/generator';
+import CopyButton from './CopyButton.astro';
 ---
 
 <div class="card xl:card-side bg-base-200 shadow-sm max-h-100 overflow-hidden">
@@ -33,8 +34,9 @@ import { genEurl } from '../scripts/generator';
 
             </code>
         </div>
-        <!-- <div class="card-actions justify-end">
-        <button class="btn btn-primary">Listen</button>
-        </div> -->
+        <div class="card-actions justify-end">
+            {enableEurl ? (<a class="btn btn-primary" href=`/generator${src}` >編輯</a>) : ''}
+            <CopyButton class="btn" text={url}>複製網址</CopyButton>
+        </div>
     </div>
 </div>
