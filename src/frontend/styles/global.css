@@ -137,15 +137,9 @@ html, body {
 .card { z-index: 1; }
 .card-body { position: relative; }
 
-/* LEVEL 2: The live preview header (Middle-Top)
-   Must be higher than any active card (100) but lower than menus (1100) */
-.eurl {
-  z-index: 500 !important;
-}
-
 /* LEVEL 3: Lifting the active container to overlap neighboring siblings */
 :is(.card, .card-body, .fieldset, .tabs, .tabs-lift, .tab-content):has(dropdown-select:focus-within) {
-  z-index: 100 !important;
+  z-index: 2 !important;
   position: relative;
 }
 
@@ -169,5 +163,5 @@ dropdown-select:focus-within {
 .tabs label:has(.tab.radio:checked) + .tab-content,
 .tabs-lift label.tab:has(input:checked) + .tab-content {
   position: relative;
-  z-index: 10;
+  z-index: 1;
 }
