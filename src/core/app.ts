@@ -147,7 +147,7 @@ async function coreHandler(
           'Content-Type': 'image/x-icon'
         },
       });
-      
+
     } else {
       return pngResp;
     }
@@ -308,7 +308,7 @@ async function coreHandler(
 
   finalElement = canvas.gen();
 
-  if (format === 'html') 
+  if (format === 'html')
   {
     const html = renderfullHtmlFromElement(finalElement, {
       ...((hasSize||hasInnerSize) && {
@@ -321,8 +321,8 @@ async function coreHandler(
       status: responseStatus,
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
-  } 
-  else if (format === 'ico') 
+  }
+  else if (format === 'ico')
   {
     // 這裡先產生 PNG Buffer（ImageResponse 會回傳 Response，我們只要拿到原始 Uint8Array）
     const pngResponse = new ImageResponseClass(finalElement as any, {

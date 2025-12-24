@@ -48,12 +48,12 @@ function setVal(form: HTMLFormElement, name: string, value: string | null | unde
 
 function getColor(form: HTMLFormElement, prefix: string): string | null {
     const type = getVal(form, `${prefix}_type`); // 'color', 'tpl', 'default'/'none'
-    
+
     if (type === 'tpl') {
         const tpl = getVal(form, `${prefix}_tpl`);
         return tpl ? `tpl(${tpl})` : null;
-    } 
-    
+    }
+
     if (type === 'color') {
         const hex = getVal(form, `${prefix}_color_hex`);
         const alpha = getVal(form, `${prefix}_color_alpha`);
@@ -115,10 +115,10 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
          const h = getVal(form, 'ph_height');
          if (w && h) contentSize = `${w}x${h}`;
          else if (w) contentSize = w;
-         else if (h) contentSize = h; 
+         else if (h) contentSize = h;
     }
-    
-    const contentBgcolor = getColor(form, 'ph_bg'); 
+
+    const contentBgcolor = getColor(form, 'ph_bg');
     const contentFgcolor = getColor(form, 'ph_fg');
 
     // Content parts:
@@ -137,7 +137,7 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
     const query: Record<string, string> = {};
     const text = getVal(form, 'text');
     if (text) query.text = text;
-    
+
     const font = getVal(form, 'font');
     if (font) query.font = font;
 
@@ -182,13 +182,13 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
         setVal(form, 'canvas_width', w);
         setVal(form, 'canvas_height', h ?? w);
     } else {
-        // If no canvas in props, maybe uncheck toggle? 
+        // If no canvas in props, maybe uncheck toggle?
         // Or keep user state? Usually if we are importing URL, we likely want to match it.
         // But for pre-filling logic, we want to reflect the URL exactly.
         const toggle = getEl<HTMLInputElement>('toggle-canvas-size');
         // Only uncheck if we are strictly updating from URL, which we are.
         if (toggle) toggle.checked = false;
-        // Also clear values? Maybe better not to destructive? 
+        // Also clear values? Maybe better not to destructive?
         // Given existing logic, we just set values.
     }
 
@@ -207,7 +207,7 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
     }
     if (props.bg.shadow) setVal(form, 'bg_shadow', props.bg.shadow);
     if (props.bg.radius) setVal(form, 'bg_radius', props.bg.radius);
-    
+
     if (props.bg.bgcolor) {
         const val = props.bg.bgcolor;
         if (val.startsWith('tpl(')) {
@@ -249,7 +249,7 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
              setVal(form, `${prefix}_color_alpha`, alpha ?? '255');
         }
     };
-    
+
     setContentColor('ph_bg', props.content.bgcolor);
     setContentColor('ph_fg', props.content.fgcolor);
 
@@ -257,7 +257,7 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
     if (props.query.text) setVal(form, 'text', props.query.text);
     if (props.query.font) setVal(form, 'font', props.query.font);
     if (props.query.scale) setVal(form, 'scale', props.query.scale);
-    
+
     const debugBox = form.elements.namedItem('debug') as HTMLInputElement;
     if (debugBox) debugBox.checked = props.query.debug === '1';
 
@@ -285,23 +285,23 @@ export function genEurl(result: SplitUrlProps): string {
     // 2. bgGroup
     const bgTitles = ['Padding', 'Shadow', 'Radius', 'Color'];
     const bgParts = cleanParts(result.bg.parts);
-    
+
     let bgGroup = '';
     if (bgParts.length > 0) {
         const partsHtml = bgParts.map((p, i) => {
              const title = bgTitles[i] || 'Unknown';
              // Render empty string for null to show // in URL instead of /null/
-             const val = p === null ? '' : p; 
+             const val = p === null ? '' : p;
              return `<span class="eurl-part" data-url-ptitle="${title}">${val}</span>`;
         }).join('/');
-        
+
         bgGroup = `<span class="eurl-group hover:bg-cyan-600/30">/bg/${partsHtml}</span>`;
     }
 
     // 3. contentGroup
     let contentGroup = '';
     const isCanvas = !!result.canvas;
-    
+
     // Determine titles
     let contentTitles: string[];
     if (isCanvas) {
@@ -313,7 +313,7 @@ export function genEurl(result: SplitUrlProps): string {
     const contentParts = cleanParts(result.content.parts);
     const hasContentParts = contentParts.length > 0;
     const type = result.content.type; // 'ph' or null
-    
+
     // Query
     const queryStr = new URLSearchParams(result.query).toString();
     const queryHtml = queryStr
@@ -333,18 +333,18 @@ export function genEurl(result: SplitUrlProps): string {
           }
 
           // Construct prefix: /type/parts...
-          // If type is null (implicit), and we have parts, we usually just show /parts... 
+          // If type is null (implicit), and we have parts, we usually just show /parts...
           // (e.g. /300x200/color - wait, implicit content usually implies PH structure?)
           // But strict generator usually uses /ph.
-          // If parts is empty, do we show /? 
+          // If parts is empty, do we show /?
           // e.g. /ph/?query...
-          
+
           let prefix = '';
           if (type) prefix = `/${type}`;
-          
+
           let middle = '';
           if (partsHtml) middle = `/${partsHtml}`;
-          
+
           contentGroup = `<span class="eurl-group hover:bg-yellow-600/30">${prefix}${middle}${queryHtml}</span>`;
     }
 
@@ -357,14 +357,14 @@ export function genEurl(result: SplitUrlProps): string {
  */
 function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
     const parts: string[] = [];
-    
+
     if (result.canvas) parts.push(result.canvas);
-    
+
     if (result.bg.parts.length > 0) {
         parts.push('bg');
         result.bg.parts.forEach(p => parts.push(p === null ? 'null' : p));
     }
-    
+
     if (result.content.type) {
         if (result.content.parts.length > 0) {
              // Assuming default is 'ph', but we push type if it's not "implicit" mode
@@ -373,7 +373,7 @@ function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
              result.content.parts.forEach(p => parts.push(p === null ? 'null' : p));
         }
     }
-    
+
     const query = new URLSearchParams(result.query).toString();
     const path = '/' + parts.join('/');
     return `${baseUrl.replace(/\/$/, '')}${path}${query ? `?${query}` : ''}`;
@@ -382,7 +382,7 @@ function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
 export function initGenerator() {
     const form = document.getElementById('generator-form') as HTMLFormElement | null;
     if (!form) return;
-    
+
     const configData = form.dataset.config;
     const CONFIG = configData ? JSON.parse(configData) : {}; // Should have defaults
 
@@ -400,7 +400,7 @@ export function initGenerator() {
              fieldset: getEl<HTMLFieldSetElement>('block-size-fieldset'),
         }
     };
-    
+
     // UI Update Logic
     function updateUIState() {
          if (sections.canvasSize.toggle && sections.canvasSize.content) {
@@ -418,7 +418,7 @@ export function initGenerator() {
                  sections.blockSize.fieldset.style.opacity = shouldDisable ? '0.5' : '1';
             }
          }
-         
+
          if (sections.edgeBg.toggle && sections.edgeBg.content) {
             const isEdgeBgEnabled = sections.edgeBg.toggle.checked;
             sections.edgeBg.content.classList.toggle('is-open', isEdgeBgEnabled);
@@ -428,46 +428,46 @@ export function initGenerator() {
     // Main Update Loop
     function update() {
         const props = formToSplitUrlProps(form!);
-        
+
         // 1. Generate URLs
         const fullUrl = localBuildUrl(props, PUBLIC_BASE_URL);
         const relativeUrl = localBuildUrl(props, '');
-        
+
         // 2. Update Eurl Display
         const eurlContent = getEl('eurl-content');
         if (eurlContent) {
             eurlContent.innerHTML = genEurl(props); // Use strict genEurl
         }
-        
+
         // 3. Update Preview
         const previewImage = getEl<HTMLImageElement>('preview-image');
         const forcePng = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        
+
         // Construct preview URL (might need diff filetype)
         const previewProps = JSON.parse(JSON.stringify(props)); // deep copy
         previewProps.query.filetype = forcePng ? 'png' : 'svg';
         // Ensure debug is off for preview? Optional.
-        
+
         const previewUrl = localBuildUrl(previewProps, ''); // relative
-        
+
         if (previewImage && previewImage.getAttribute('src') !== previewUrl) {
              const loader = getEl('preview-loading');
              loader?.classList.remove('hidden');
              previewImage.src = previewUrl;
         }
-        
+
         // 4. Update Display Text
         const urlDisplay = getEl('preview-url-display');
         if (urlDisplay) urlDisplay.textContent = fullUrl;
-        
+
         // 5. Embeds
         const embedHtml = getEl('embed-html');
         if (embedHtml) embedHtml.innerText = `<img src="${fullUrl}">`;
-        
+
         const embedMarkdown = getEl('embed-markdown');
         const alt = props.query.text || CONFIG.defaults?.embed_alt || 'Image';
         if (embedMarkdown) embedMarkdown.innerText = `![${alt}](${fullUrl})`;
-        
+
         // 6. Downloads
         const setDl = (id: string, ft: string) => {
             const temp = JSON.parse(JSON.stringify(props));
@@ -489,15 +489,15 @@ export function initGenerator() {
             debounceTimer = null;
         }, CONFIG.debounceDelay || 1000); // default 1000
     }
-    
+
     // Immediate update for toggles
     form.addEventListener('change', (e) => {
         updateUIState();
         // If it's a toggle change, update immediately? Or use debounce?
         // User expects fast feedback on toggles usually?
-        update(); 
+        update();
     });
-    
+
     form.addEventListener('input', () => {
         updateUIState();
         scheduleUpdate();
@@ -522,7 +522,7 @@ export function initGenerator() {
         previewImage.addEventListener('load', () => getEl('preview-loading')?.classList.add('hidden'));
         previewImage.addEventListener('error', () => getEl('preview-loading')?.classList.add('hidden'));
     }
-    
+
     // Dynamic Sticky calculation (preserve existing logic)
     const eurlSticky = getEl<HTMLElement>('eurl-sticky');
     const previewSticky = getEl<HTMLElement>('preview-sticky-container');
@@ -532,7 +532,7 @@ export function initGenerator() {
         });
         obs.observe(eurlSticky);
     }
-    
+
     // Apply defaults logic
     function applyDefaults() {
          // Logic to set form defaults from CONFIG.defaults
@@ -540,7 +540,7 @@ export function initGenerator() {
          // ... implementation same as before ...
          const defaults = CONFIG.defaults;
          if (!defaults) return;
-         
+
          const map: Record<string, string> = {
             'canvas_width': defaults.canvas_width,
             'canvas_height': defaults.canvas_height,
@@ -554,7 +554,7 @@ export function initGenerator() {
             'ph_fg_color_alpha': defaults.default_alpha,
             'scale': defaults.default_scale,
          };
-         
+
          for (const [k, v] of Object.entries(map)) {
              const el = form!.elements.namedItem(k) as HTMLInputElement;
              if (el && !el.value && v) {
@@ -562,7 +562,7 @@ export function initGenerator() {
              }
          }
     }
-    
+
     applyDefaults();
 
     // Check URL for pre-fill
@@ -571,7 +571,7 @@ export function initGenerator() {
          const subPath = pathname.substring(10);
          const fullSubUrl = subPath + window.location.search;
          const parsed = splitUrl(fullSubUrl);
-         
+
          splitUrlPropsToForm(parsed, form);
          // After setting from URL, update UI
          updateUIState();
