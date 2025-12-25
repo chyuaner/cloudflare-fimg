@@ -72,7 +72,7 @@ export default defineConfig({
             const isNumberPattern = /^\/\d+(x\d+)?(?:\/.*|\.[^/]+)?$/;
 
             // 2️⃣ /bg/...  或  /ph/...
-            const isBgPhPattern = /^\/(bg|ph)\/.*$/;
+            const isBgPhPattern = /^\/(debug|bg|bd|ph)\/.*$/;
 
             // 3️⃣ 白名單（目前列出 /404、/favicon.png、/favicon.ico）
             const whitelist = new Set(['/err404', '/favicon.png', '/favicon.ico']);

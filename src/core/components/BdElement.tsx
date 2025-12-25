@@ -4,11 +4,15 @@ import { parseTextToElements } from "./elementUtils";
 interface BdElementProps {
   bgUrl?: string;
   bgColor?: string;
+  bdColor?: string;
+  bdWidth?: number | string;
 }
 
 const BdElement = ({
   bgColor,
   bgUrl,
+  bdColor,
+  bdWidth,
   style = {},
   children,
 }: React.PropsWithChildren<BdElementProps & { style?: React.CSSProperties }>) => {
@@ -21,6 +25,9 @@ const BdElement = ({
         ...(bgColor ? { backgroundColor: bgColor } : {}),
         ...(bgUrl ? { background: `url(${bgUrl})` } : {}),
         backgroundSize: "100% 100%",
+        ...(bdColor ? { borderColor: bdColor } : {}),
+        ...(bdWidth ? { borderWidth: bdWidth } : {}),
+        borderStyle: 'solid',
         ...style,
       }}
     >

@@ -17,6 +17,11 @@ export interface SplitUrlProps {
     radius?: string | null;
     bgcolor?: string | null;
   };
+  bd: {
+    parts: (string | null)[];
+    padding?: string | null;
+    bgcolor?: string | null;
+  };
   content: {
     type: string | null;
     parts: (string | null)[];
@@ -131,7 +136,7 @@ export function splitUrl(
   const canvas = isCanvas ? first.replace(EXT_REG, '') : null;
 
   // ---------- 預設空區塊 ----------
-  const blockKeys = ['bg', ...contentKeys];          // 必須先列出 bg
+  const blockKeys = ['bg', 'bd', ...contentKeys];          // 必須先列出 bg, bd
   const blocks: Record<string, { parts: (string | null)[] }> = {};
   blockKeys.forEach(k => (blocks[k] = { parts: [] }));
 
@@ -181,7 +186,7 @@ export function splitUrl(
             // 去除副檔名
             const withoutExt = p.replace(EXT_REG, '');
             // 排除「bg」或 content key 本身（代表下一段的開始）
-            if (withoutExt === 'bg' || contentKeys.includes(withoutExt)) return null;
+            if (withoutExt === 'bg' || withoutExt === 'bd' || contentKeys.includes(withoutExt)) return null;
             return normalizePart(withoutExt);
           })
       : [];
@@ -199,7 +204,7 @@ export function splitUrl(
     const contentParts: (string | null)[] = [];
     for (let i = 1; i < segs.length; i++) {
       let seg = segs[i].replace(EXT_REG, '');
-      if (seg === 'bg' || contentKeys.includes(seg)) break;
+      if (seg === 'bg' || seg === 'bd' || contentKeys.includes(seg)) break;
       contentParts.push(normalizePart(seg));
     }
     if (contentParts.length > 0) {
@@ -243,7 +248,16 @@ export function splitUrl(
       bgcolor: bgParts[3],
   };
 
-  return { canvas, bg: bgObj, content: contentObj, ext, query, cQuery, exQuery };
+  // 處理 named keys for bd
+  // [bd-padding (width)]/[bd-bgcolor (color)]
+  const bdParts = blocks.bd.parts;
+  const bdObj = {
+      parts: bdParts,
+      padding: bdParts[0],
+      bgcolor: bdParts[1],
+  };
+
+  return { canvas, bg: bgObj, bd: bdObj, content: contentObj, ext, query, cQuery, exQuery };
 }
 
 /**
@@ -284,6 +298,16 @@ export function buildUrl(
   if (bgParts.length > 0) {
     // 在前面加入「bg」段落
     pathSegments.push('bg', ...bgParts.map(p => encodeURIComponent(p)));
+  }
+
+  // ---- ②-2 Border ------------------------------------------------------
+  const bdParts = [
+    data.bd.padding,
+    data.bd.bgcolor,
+  ].filter((p): p is string => p != null);
+
+  if (bdParts.length > 0) {
+    pathSegments.push('bd', ...bdParts.map(p => encodeURIComponent(p)));
   }
 
   // ---- ③ Content -------------------------------------------------------

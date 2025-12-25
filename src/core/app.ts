@@ -186,7 +186,7 @@ async function coreHandler(
   // Parse the URL for image generation parameters
   // Include query string to ensure consistent parsing with debug route
   const fullPath = normalizedPath + url.search;
-  const { canvas: rawCanvasParam, bg, content, query } = splitUrl(fullPath);
+  const { canvas: rawCanvasParam, bg, bd, content, query } = splitUrl(fullPath);
 
   let responseStatus = 200; // Initial status, will change to 400 if any asset loading fails
 
@@ -249,6 +249,14 @@ async function coreHandler(
     canvas.setCanvasScale(scale);
   }
   canvas.setCanvasSize(width, height);
+    
+  // bd --------------------------------
+  // bd.padding -> borderWidth
+  // bd.bgcolor -> borderColor
+  const bdWidthRaw = bd.padding ? parseSingleSize(bd.padding, { width, height }) : undefined;
+  // User logic: if 30p, parseSingleSize handles "p" or %. If p is missing, it's ratio of min side.
+  const bdColorRaw = bd.bgcolor ? parseColor(bd.bgcolor) : undefined;
+
   canvas.addPh({
     ...bgParm!,
     fgColor,
@@ -256,6 +264,8 @@ async function coreHandler(
     fontSize: fontSizeVal,
     text,
     title,
+    bdColor: bdColorRaw,
+    bdWidth: bdWidthRaw,
   });
 
   // bg --------------------------------

@@ -169,6 +169,11 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
             radius: bgRadius,
             bgcolor: bgBgcolor
         },
+        bd: {
+            parts: [],
+            padding: null,
+            bgcolor: null
+        },
         content: {
             type: 'ph',
             parts: contentParts,

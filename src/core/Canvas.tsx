@@ -68,8 +68,10 @@ export class Canvas {
     fontSize: number;
     text?: string;
     title?: string;
+    bdColor?: string;
+    bdWidth?: number | string;
   }) {
-    const { bgColor, bgUrl, fgColor, fontName, fontSize, text, title } = opts;
+    const { bgColor, bgUrl, fgColor, fontName, fontSize, text, title, bdColor, bdWidth } = opts;
     // Scale fontSize (always number)
     const scaledFontSize = fontSize * this.scale;
 
@@ -92,6 +94,8 @@ export class Canvas {
       <BdElement
         bgColor={bgColor}
         bgUrl={bgUrl}
+        bdColor={bdColor}
+        bdWidth={this.scalePx(bdWidth)}
       >
         {ph}
       </BdElement>
