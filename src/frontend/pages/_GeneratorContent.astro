@@ -53,7 +53,7 @@ const generatorConfig = {
 &lt;img src=&quot;{PUBLIC_BASE_URL}/300x200/bg/5/10/4/tpl(drool-l)/ph.svg&quot;&gt; &lt;!--&#x5E36;&#x6709;&#x5E36;&#x6709;&#x5713;&#x89D2;&#x9670;&#x5F71;&#x7684;&#x5716;&#x6848;&#x908A;&#x7DE3;&#x7684;&#x9810;&#x7559;&#x5716;--&gt;</pre>
         </div>
         <div class="prose-img:m-2 hidden lg:flex">
-            <img class="" alt="fakeimg.pl" src="/440x250/bg/5/3/ph/282828/eae0d0">
+            <img class="object-contain" alt="fakeimg.pl" src="/440x250/bg/5/3/ph/282828/eae0d0.png">
         </div>
     </div>
 </section>
@@ -186,6 +186,50 @@ const generatorConfig = {
                         </div>
                     </section>
 
+                    <!-- Border Section -->
+                    <section class="card bg-slate-600/30 shadow-sm">
+                        <div class="card-body">
+                            <header class="md:flex items-center justify-between">
+                                <h2 class="card-title md:flex mb-0">內容邊框</h2>
+                                <div>
+                                    <p class="label">Optional</p>
+                                    <input type="checkbox" id="toggle-bd" class="toggle" checked />
+                                </div>
+                            </header>
+
+                            <div class="content collapsible-content" id="content-bd">
+                                <div>
+                                    <fieldset class="fieldset">
+                                        <legend class="fieldset-legend">Width</legend>
+                                        <label class="input w-full">
+                                            <input type="number" name="bd_w" placeholder="Width" class="w-full" /><span class="label">%</span>
+                                        </label>
+                                    </fieldset>
+
+                                    <fieldset class="fieldset">
+                                        <div class="tabs">
+                                            <legend class="fieldset-legend mr-6 w-full sm:w-auto">Background</legend>
+                                            <label class="label pr-4 mb-2">
+                                                <input type="radio" name="bd_type" class="tab radio" value="color" checked />
+                                                Color
+                                            </label>
+                                            <div class="tab-content">
+                                                <ColorInput name="bd_color" />
+                                            </div>
+
+                                            <label class="label pr-4 mb-2">
+                                                <input type="radio" name="bd_type" class="tab radio" value="none" />None
+                                            </label>
+                                            <div class="tab-content">
+                                                <div class="p-2 text-sm opacity-50">Transarent Background</div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Main Content Section -->
                     <section class="card bg-yellow-600/30 shadow-sm">
                         <div class="p-3">
@@ -261,6 +305,12 @@ const generatorConfig = {
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Text</legend>
                                         <input type="text" name="text" class="input w-full" placeholder="" />
+                                        <p class="label">Optional</p>
+                                    </fieldset>
+
+                                    <fieldset class="fieldset">
+                                        <legend class="fieldset-legend">Title</legend>
+                                        <input type="text" name="title" class="input w-full" placeholder="" />
                                         <p class="label">Optional</p>
                                     </fieldset>
 

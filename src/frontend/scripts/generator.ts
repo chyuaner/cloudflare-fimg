@@ -12,6 +12,10 @@ interface GeneratorElements {
         toggle: HTMLInputElement;
         content: HTMLElement;
     };
+    bd: {
+        toggle: HTMLInputElement;
+        content: HTMLElement;
+    };
     preview: {
         image: HTMLImageElement;
         loading: HTMLElement;
@@ -102,6 +106,22 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
         bgBgcolor = getColor(form, 'bg');
     }
 
+    // 2-2. Border
+    const isBdEnabled = (getEl('toggle-bd') as HTMLInputElement)?.checked ?? false;
+    let bdWidth: string | null = null;
+    let bdColor: string | null = null;
+    
+    if (isBdEnabled) {
+        const w = getVal(form, 'bd_w');
+        if (w) bdWidth = w;
+        bdColor = getColor(form, 'bd'); 
+    }
+    
+    // Construct bd parts: [padding(width), bgcolor(color)]
+    const rawBdParts = [bdWidth, bdColor];
+    const lastBdIndex = rawBdParts.findLastIndex(p => p !== null);
+    const bdParts = lastBdIndex === -1 ? [] : rawBdParts.slice(0, lastBdIndex + 1);
+
     // Construct bg parts: [padding, shadow, radius, bgcolor]
     // Valid parts array should support intermediate nulls if subsequent parts exist.
     const rawBgParts = [bgPadding, bgShadow, bgRadius, bgBgcolor];
@@ -170,9 +190,9 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
             bgcolor: bgBgcolor
         },
         bd: {
-            parts: [],
-            padding: null,
-            bgcolor: null
+            parts: bdParts,
+            padding: bdWidth,
+            bgcolor: bdColor
         },
         content: {
             type: 'ph',
@@ -244,6 +264,27 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
          // Default to None or keep as is?
     }
 
+    // 2-2. Border
+    const hasBd = props.bd.parts.length > 0;
+    const bdToggle = getEl<HTMLInputElement>('toggle-bd');
+    if (bdToggle) {
+        bdToggle.checked = hasBd;
+        bdToggle.dispatchEvent(new Event('change'));
+    }
+    if (props.bd.padding) setVal(form, 'bd_w', props.bd.padding);
+    if (props.bd.bgcolor) {
+        const val = props.bd.bgcolor;
+        const r = form.querySelector(`input[name="bd_type"][value="color"]`) as HTMLInputElement;
+        if (r) r.checked = true;
+        // val is like hex,alpha or color name
+        // Our splitUrl logic currently stores exact part? 
+        // splitUrl parses hex,alpha into parts.
+        // If bd.bgcolor came from splitUrl, it's a string part.
+        const [hex, alpha] = val.split(',');
+        setVal(form, 'bd_color_hex', hex);
+        setVal(form, 'bd_color_alpha', alpha ?? '255');
+    }
+
     // 3. Content
     if (props.content.size) {
         const [cw, ch] = props.content.size.split('x');
@@ -297,6 +338,7 @@ function getUrlSegments(result: SplitUrlProps) {
 
     const canvas = result.canvas;
     const bgParts = cleanParts(result.bg.parts);
+    const bdParts = cleanParts(result.bd.parts);
     const contentParts = cleanParts(result.content.parts);
     const type = result.content.type;
     const query = result.query;
@@ -306,18 +348,21 @@ function getUrlSegments(result: SplitUrlProps) {
 
     const hasCanvas = !!canvas;
     const hasBg = bgParts.length > 0;
+    const hasBd = bdParts.length > 0;
 
     // Omit /ph if first segment
     let omitType = false;
-    if (type === 'ph' && !hasCanvas && !hasBg) {
+    if (type === 'ph' && !hasCanvas && !hasBg && !hasBd) { // Wait, if hasBd, we shouldn't omit type? Actually if first segment is bd...
+        // The structure is /canvas/bg/.../bd/.../content...
+        // If no canvas, no bg, no bd, then /ph/... can omit /ph/
         omitType = true;
     }
 
-    return { canvas, bgParts, contentParts, type, omitType, query, cQuery, exQuery, ext, hasCanvas, hasBg };
+    return { canvas, bgParts, bdParts, contentParts, type, omitType, query, cQuery, exQuery, ext, hasCanvas, hasBg };
 }
 
 export function genEurl(result: SplitUrlProps): string {
-    const { canvas, bgParts, contentParts, type, omitType, cQuery, exQuery, ext } = getUrlSegments(result);
+    const { canvas, bgParts, bdParts, contentParts, type, omitType, cQuery, exQuery, ext } = getUrlSegments(result);
 
     // 1. canvasGroup
     const canvasGroup = canvas
@@ -338,7 +383,19 @@ export function genEurl(result: SplitUrlProps): string {
         bgGroup = `<span class="eurl-group hover:bg-cyan-600/30">/bg/${partsHtml}</span>`;
     }
 
-    // 3. contentGroup
+    // 3. bdGroup
+    const bdTitles = ['Width', 'Color'];
+    let bdGroup = '';
+    if (bdParts.length > 0) {
+        const partsHtml = bdParts.map((p, i) => {
+             const title = bdTitles[i] || 'Unknown';
+             const val = p === null ? '' : p;
+             return `<span class="eurl-part" data-url-ptitle="${title}">${val}</span>`;
+        }).join('/');
+        bdGroup = `<span class="eurl-group hover:bg-slate-600/30">/bd/${partsHtml}</span>`;
+    }
+
+    // 4. contentGroup
     let contentGroup = '';
     const contentTitles = canvas ? ['bgcolor', 'fgcolor'] : ['Block Size', 'bgcolor', 'fgcolor'];
     const hasContentParts = contentParts.length > 0;
@@ -373,11 +430,11 @@ export function genEurl(result: SplitUrlProps): string {
         `</span>`;
     }
 
-    return `${canvasGroup}${bgGroup}${contentGroup}${exGroup}`;
+    return `${canvasGroup}${bgGroup}${bdGroup}${contentGroup}${exGroup}`;
 }
 
 function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
-    const { canvas, bgParts, contentParts, type, omitType, query, ext } = getUrlSegments(result);
+    const { canvas, bgParts, bdParts, contentParts, type, omitType, query, ext } = getUrlSegments(result);
     const pathParts: string[] = [];
 
     if (canvas) pathParts.push(canvas);
@@ -385,6 +442,11 @@ function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
     if (bgParts.length > 0) {
         pathParts.push('bg');
         bgParts.forEach(p => pathParts.push(p === null ? 'null' : p));
+    }
+
+    if (bdParts.length > 0) {
+        pathParts.push('bd');
+        bdParts.forEach(p => pathParts.push(p === null ? 'null' : p));
     }
 
     if (type) {
@@ -417,6 +479,10 @@ export function initGenerator() {
              toggle: getEl<HTMLInputElement>('toggle-edge-bg'),
              content: getEl<HTMLElement>('content-edge-bg'),
         },
+        bd: {
+             toggle: getEl<HTMLInputElement>('toggle-bd'),
+             content: getEl<HTMLElement>('content-bd'),
+        },
         blockSize: {
              fieldset: getEl<HTMLFieldSetElement>('block-size-fieldset'),
         }
@@ -443,6 +509,11 @@ export function initGenerator() {
          if (sections.edgeBg.toggle && sections.edgeBg.content) {
             const isEdgeBgEnabled = sections.edgeBg.toggle.checked;
             sections.edgeBg.content.classList.toggle('is-open', isEdgeBgEnabled);
+         }
+
+         if (sections.bd.toggle && sections.bd.content) {
+            const isBdEnabled = sections.bd.toggle.checked;
+            sections.bd.content.classList.toggle('is-open', isBdEnabled);
          }
     }
 
@@ -536,6 +607,11 @@ export function initGenerator() {
     }
     if (sections.edgeBg.toggle) {
          sections.edgeBg.toggle.addEventListener('change', () => {
+             updateUIState(); update();
+         });
+    }
+    if (sections.bd.toggle) {
+         sections.bd.toggle.addEventListener('change', () => {
              updateUIState(); update();
          });
     }
