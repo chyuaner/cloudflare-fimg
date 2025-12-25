@@ -426,7 +426,10 @@ export function initGenerator() {
 
         // 3. Update Preview
         const previewImage = getEl<HTMLImageElement>('preview-image');
-        const forcePng = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        // Modern iPadOS (13+) reports as Macintosh. We check for touch points to distinguish from Mac.
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isIpadOS = navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1;
+        const forcePng = isIos || isIpadOS;
 
         // Construct preview URL (might need diff filetype)
         const previewProps = JSON.parse(JSON.stringify(props)); // deep copy
