@@ -27,6 +27,8 @@ export interface SplitUrlProps {
   };
   ext: string | null;
   query: Record<string, string>;
+  cQuery: Record<string, string>;
+  exQuery: Record<string, string>;
 }
 
 /**
@@ -110,6 +112,17 @@ export function splitUrl(
 
   // ---------- 解析 query ----------
   const query = Object.fromEntries(new URLSearchParams(rawQuery));
+  const EX_KEYS = ['scale', 'debug', 'filetype', 'retina'];
+  const cQuery: Record<string, string> = {};
+  const exQuery: Record<string, string> = {};
+
+  for (const [key, val] of Object.entries(query)) {
+    if (EX_KEYS.includes(key)) {
+      exQuery[key] = val;
+    } else {
+      cQuery[key] = val;
+    }
+  }
 
 
   // ---------- 先找 canvas ----------
@@ -230,7 +243,7 @@ export function splitUrl(
       bgcolor: bgParts[3],
   };
 
-  return { canvas, bg: bgObj, content: contentObj, ext, query };
+  return { canvas, bg: bgObj, content: contentObj, ext, query, cQuery, exQuery };
 }
 
 /**

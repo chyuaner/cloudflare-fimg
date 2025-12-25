@@ -135,20 +135,30 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
 
     // 4. Query
     const query: Record<string, string> = {};
+    const cQuery: Record<string, string> = {};
+    const exQuery: Record<string, string> = {};
+    const EX_KEYS = ['scale', 'debug', 'filetype', 'retina'];
+
+    const addToBoth = (k: string, v: string) => {
+        query[k] = v;
+        if (EX_KEYS.includes(k)) exQuery[k] = v;
+        else cQuery[k] = v;
+    };
+
     const text = getVal(form, 'text');
-    if (text) query.text = text;
+    if (text) addToBoth('text', text);
 
     const font = getVal(form, 'font');
-    if (font) query.font = font;
+    if (font) addToBoth('font', font);
 
     const scale = getVal(form, 'scale');
-    if (scale && scale !== '1') query.scale = scale;
+    if (scale && scale !== '1') addToBoth('scale', scale);
 
     const debug = (form.elements.namedItem('debug') as HTMLInputElement)?.checked;
-    if (debug) query.debug = '1';
+    if (debug) addToBoth('debug', '1');
 
     const filetype = getVal(form, 'filetype');
-    if (filetype && filetype !== 'null') query.filetype = filetype;
+    if (filetype && filetype !== 'null') addToBoth('filetype', filetype);
 
     return {
         canvas,
@@ -167,7 +177,9 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
             fgcolor: contentFgcolor
         },
         ext: null,
-        query
+        query,
+        cQuery,
+        exQuery
     };
 }
 
@@ -283,6 +295,8 @@ function getUrlSegments(result: SplitUrlProps) {
     const contentParts = cleanParts(result.content.parts);
     const type = result.content.type;
     const query = result.query;
+    const cQuery = result.cQuery;
+    const exQuery = result.exQuery;
     const ext = result.ext;
 
     const hasCanvas = !!canvas;
@@ -294,11 +308,11 @@ function getUrlSegments(result: SplitUrlProps) {
         omitType = true;
     }
 
-    return { canvas, bgParts, contentParts, type, omitType, query, ext, hasCanvas, hasBg };
+    return { canvas, bgParts, contentParts, type, omitType, query, cQuery, exQuery, ext, hasCanvas, hasBg };
 }
 
 export function genEurl(result: SplitUrlProps): string {
-    const { canvas, bgParts, contentParts, type, omitType, query, ext } = getUrlSegments(result);
+    const { canvas, bgParts, contentParts, type, omitType, cQuery, exQuery, ext } = getUrlSegments(result);
 
     // 1. canvasGroup
     const canvasGroup = canvas
@@ -323,12 +337,12 @@ export function genEurl(result: SplitUrlProps): string {
     let contentGroup = '';
     const contentTitles = canvas ? ['bgcolor', 'fgcolor'] : ['Block Size', 'bgcolor', 'fgcolor'];
     const hasContentParts = contentParts.length > 0;
-    const queryStr = new URLSearchParams(query).toString();
-    const queryHtml = queryStr
-        ? `/?<span class="eurl-part">${queryStr.replace(/&/g, '&amp;<wbr>')}</span>`
+    const cQueryStr = new URLSearchParams(cQuery).toString();
+    const queryHtml = cQueryStr
+        ? `/?<span class="eurl-part">${cQueryStr.replace(/&/g, '&amp;<wbr>')}</span>`
         : '';
 
-    if (hasContentParts || type || queryStr || ext) {
+    if (hasContentParts || type || cQueryStr || ext) {
           let partsHtml = '';
           if (hasContentParts) {
               partsHtml = contentParts.map((p, i) => {
@@ -344,7 +358,17 @@ export function genEurl(result: SplitUrlProps): string {
           contentGroup = `<span class="eurl-group hover:bg-yellow-600/30">${prefix}${middle}${extHtml}${queryHtml}</span>`;
     }
 
-    return `${canvasGroup}${bgGroup}${contentGroup}`;
+    // 4. exGroup
+    let exGroup = '';
+    const exQueryStr = new URLSearchParams(exQuery).toString();
+    if (exQueryStr) {
+        const exPrefix = cQueryStr ? '&amp;' : '?';
+        exGroup = `<span class="eurl-group hover:bg-green-600/30" data-url-gtitle="Extra config">${exPrefix}` +
+        `<span class="eurl-part">${exQueryStr.replace(/&/g, '&amp;<wbr>')}</span>` +
+        `</span>`;
+    }
+
+    return `${canvasGroup}${bgGroup}${contentGroup}${exGroup}`;
 }
 
 function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
