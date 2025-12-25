@@ -139,7 +139,7 @@ html, body {
 
 /* LEVEL 3: Lifting the active container to overlap neighboring siblings */
 :is(.card, .card-body, .fieldset, .tabs, .tabs-lift, .tab-content):has(dropdown-select:focus-within) {
-  z-index: 2 !important;
+  z-index: 50 !important;
   position: relative;
 }
 

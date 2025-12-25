@@ -33,7 +33,7 @@ const selectedOption = options.find(o => o.value === defaultValue);
 const displayLabel = selectedOption ? selectedOption.label : placeholder;
 ---
 
-<dropdown-select class={`block dropdown dropdown-bottom w-full dropdown-select group`} id={id} data-name={name} data-placeholder={placeholder}>
+<dropdown-select class={`block dropdown dropdown-bottom w-full dropdown-select group focus-within:z-20`} id={id} data-name={name} data-placeholder={placeholder}>
   <!-- Native Select: Visible by default, hidden when JS is active -->
   <select
     name={name}
