@@ -166,6 +166,7 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
             bgcolor: contentBgcolor,
             fgcolor: contentFgcolor
         },
+        ext: null,
         query
     };
 }
@@ -261,8 +262,9 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
     const debugBox = form.elements.namedItem('debug') as HTMLInputElement;
     if (debugBox) debugBox.checked = props.query.debug === '1';
 
-    if (props.query.filetype) {
-         const r = form.querySelector(`input[name="filetype"][value="${props.query.filetype}"]`) as HTMLInputElement;
+    const ft = props.query.filetype || (props.ext ? props.ext.replace(/^\./, '').toLowerCase() : null);
+    if (ft) {
+         const r = form.querySelector(`input[name="filetype"][value="${ft}"]`) as HTMLInputElement;
          if (r) r.checked = true;
     }
 }
@@ -281,6 +283,7 @@ function getUrlSegments(result: SplitUrlProps) {
     const contentParts = cleanParts(result.content.parts);
     const type = result.content.type;
     const query = result.query;
+    const ext = result.ext;
 
     const hasCanvas = !!canvas;
     const hasBg = bgParts.length > 0;
@@ -291,11 +294,11 @@ function getUrlSegments(result: SplitUrlProps) {
         omitType = true;
     }
 
-    return { canvas, bgParts, contentParts, type, omitType, query, hasCanvas, hasBg };
+    return { canvas, bgParts, contentParts, type, omitType, query, ext, hasCanvas, hasBg };
 }
 
 export function genEurl(result: SplitUrlProps): string {
-    const { canvas, bgParts, contentParts, type, omitType, query } = getUrlSegments(result);
+    const { canvas, bgParts, contentParts, type, omitType, query, ext } = getUrlSegments(result);
 
     // 1. canvasGroup
     const canvasGroup = canvas
@@ -325,7 +328,7 @@ export function genEurl(result: SplitUrlProps): string {
         ? `/?<span class="eurl-part">${queryStr.replace(/&/g, '&amp;<wbr>')}</span>`
         : '';
 
-    if (hasContentParts || type || queryStr) {
+    if (hasContentParts || type || queryStr || ext) {
           let partsHtml = '';
           if (hasContentParts) {
               partsHtml = contentParts.map((p, i) => {
@@ -337,14 +340,15 @@ export function genEurl(result: SplitUrlProps): string {
 
           const prefix = (type && !omitType) ? `/${type}` : '';
           const middle = partsHtml ? `/${partsHtml}` : '';
-          contentGroup = `<span class="eurl-group hover:bg-yellow-600/30">${prefix}${middle}${queryHtml}</span>`;
+          const extHtml = ext ? `<span class="eurl-part" data-url-ptitle="Extension">${ext}</span>` : '';
+          contentGroup = `<span class="eurl-group hover:bg-yellow-600/30">${prefix}${middle}${extHtml}${queryHtml}</span>`;
     }
 
     return `${canvasGroup}${bgGroup}${contentGroup}`;
 }
 
 function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
-    const { canvas, bgParts, contentParts, type, omitType, query } = getUrlSegments(result);
+    const { canvas, bgParts, contentParts, type, omitType, query, ext } = getUrlSegments(result);
     const pathParts: string[] = [];
 
     if (canvas) pathParts.push(canvas);
@@ -360,7 +364,10 @@ function localBuildUrl(result: SplitUrlProps, baseUrl: string = ''): string {
     }
 
     const queryStr = new URLSearchParams(query).toString();
-    const path = '/' + pathParts.join('/');
+    let path = '/' + pathParts.join('/');
+    if (ext && path !== '/') {
+        path += ext;
+    }
     return `${baseUrl.replace(/\/$/, '')}${path}${queryStr ? `?${queryStr}` : ''}`;
 }
 

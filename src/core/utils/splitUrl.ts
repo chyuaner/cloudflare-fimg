@@ -25,6 +25,7 @@ export interface SplitUrlProps {
     bgcolor?: string | null;
     fgcolor?: string | null;
   };
+  ext: string | null;
   query: Record<string, string>;
 }
 
@@ -90,14 +91,17 @@ export function splitUrl(
   // 確保有前導 '/'（外部只會傳入 "/300x200/…" 之類的字串）
   const pathnameRaw = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
 
+  const EXT_REG = /\.(png|svg|jpg|jpeg|gif|html)$/i;   // 已在檔案底部宣告，保留
+  const extMatch = pathnameRaw.match(EXT_REG);
+  const ext = extMatch ? extMatch[0] : null;
+
   // ------------------------------------------------------------
   // ① 正規化：把 "ph.png"、"code.jpg"、"img.svg" 這類寫法
   //    轉成 "ph/.png"、"code/.jpg"、"img/.svg"
   // ------------------------------------------------------------
-  const EXT_REG = /\.(png|svg|jpg|jpeg|gif|html)$/i;   // 已在檔案底部宣告，保留
   const normalizedPath = pathnameRaw.replace(
     new RegExp(`/(ph|code|img)(${EXT_REG.source})$`, 'i'),
-    (_, key, ext) => `/${key}/${ext}`   // 變成 "/ph/.png" 之類
+    (_, key, extPart) => `/${key}/${extPart}`   // 變成 "/ph/.png" 之類
   );
 
   // 後面的流程全部改用 normalizedPath
@@ -226,7 +230,7 @@ export function splitUrl(
       bgcolor: bgParts[3],
   };
 
-  return { canvas, bg: bgObj, content: contentObj, query };
+  return { canvas, bg: bgObj, content: contentObj, ext, query };
 }
 
 /**
@@ -294,7 +298,10 @@ export function buildUrl(
   const queryString = new URLSearchParams(data.query).toString();
 
   // ---- ⑤ 拼接 ---------------------------------------------------------
-  const path = '/' + pathSegments.filter(Boolean).join('/'); // 保證開頭有 '/'
+  let path = '/' + pathSegments.filter(Boolean).join('/'); // 保證開頭有 '/'
+  if (data.ext && path !== '/') {
+    path += data.ext;
+  }
   const url = `${baseUrl.replace(/\/$/, '')}${path}${queryString ? `?${queryString}` : ''}`;
 
   return url;
