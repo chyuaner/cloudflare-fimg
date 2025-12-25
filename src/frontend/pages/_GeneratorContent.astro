@@ -35,6 +35,8 @@ const generatorConfig = {
         canvas_height: '',
         ph_width: '300',
         ph_height: '',
+        bd_width: '5',
+        bd_color: '9a9996',
         embed_alt: 'Image'
     }
 };
@@ -193,7 +195,7 @@ const generatorConfig = {
                                 <h2 class="card-title md:flex mb-0">內容邊框</h2>
                                 <div>
                                     <p class="label">Optional</p>
-                                    <input type="checkbox" id="toggle-bd" class="toggle" checked />
+                                    <input type="checkbox" id="toggle-bd" class="toggle" />
                                 </div>
                             </header>
 
@@ -309,7 +311,7 @@ const generatorConfig = {
                                     </fieldset>
 
                                     <fieldset class="fieldset">
-                                        <legend class="fieldset-legend">Title</legend>
+                                        <legend class="fieldset-legend">Icon (emoji) or Title</legend>
                                         <input type="text" name="title" class="input w-full" placeholder="" />
                                         <p class="label">Optional</p>
                                     </fieldset>

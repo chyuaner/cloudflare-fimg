@@ -168,6 +168,9 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
     const text = getVal(form, 'text');
     if (text) addToBoth('text', text);
 
+    const title = getVal(form, 'title');
+    if (title) addToBoth('title', title);
+
     const font = getVal(form, 'font');
     if (font) addToBoth('font', font);
 
@@ -314,6 +317,7 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
 
     // 4. Query
     if (props.query.text) setVal(form, 'text', props.query.text);
+    if (props.query.title) setVal(form, 'title', props.query.title);
     if (props.query.font) setVal(form, 'font', props.query.font);
     if (props.query.scale) setVal(form, 'scale', props.query.scale);
 
@@ -650,6 +654,9 @@ export function initGenerator() {
             'bg_shadow': defaults.bg_shadow,
             'bg_radius': defaults.bg_radius,
             'bg_color_alpha': defaults.default_alpha,
+            'bd_w': defaults.bd_width,
+            'bd_color_hex': defaults.bd_color,
+            'bd_color_alpha': defaults.default_alpha,
             'ph_bg_color_alpha': defaults.default_alpha,
             'ph_fg_color_alpha': defaults.default_alpha,
             'scale': defaults.default_scale,
