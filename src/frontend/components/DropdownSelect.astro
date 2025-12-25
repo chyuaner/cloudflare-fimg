@@ -33,11 +33,11 @@ const selectedOption = options.find(o => o.value === defaultValue);
 const displayLabel = selectedOption ? selectedOption.label : placeholder;
 ---
 
-<dropdown-select class={`block dropdown dropdown-bottom w-full dropdown-select ${className} group`} id={id} data-name={name} data-placeholder={placeholder}>
+<dropdown-select class={`block dropdown dropdown-bottom w-full dropdown-select group`} id={id} data-name={name} data-placeholder={placeholder}>
   <!-- Native Select: Visible by default, hidden when JS is active -->
   <select
     name={name}
-    class="select select-bordered w-full native-select group-[.is-js]:hidden"
+    class="w-full native-select group-[.is-js]:hidden ${className}"
     {disabled}
   >
     {options.map(opt => (
@@ -52,7 +52,7 @@ const displayLabel = selectedOption ? selectedOption.label : placeholder;
     <div
       tabindex={disabled ? -1 : 0}
       role="button"
-      class={`select select-bordered flex items-center justify-between w-full h-auto py-2 min-h-[38px] ${disabled ? 'select-disabled pointer-events-none opacity-50' : ''}`}
+      class={`flex items-center justify-between w-full h-auto py-2 min-h-[38px] ${disabled ? 'select-disabled pointer-events-none opacity-50' : ''} ${className}`}
     >
       <div class="flex items-center gap-3 overflow-hidden">
         <img src="" alt="" class="selected-img w-8 h-8 object-cover rounded bg-base-200 shrink-0 hidden" />

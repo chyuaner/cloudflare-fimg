@@ -26,15 +26,18 @@ const { name = 'color', disabled = false, valHex = '', valAlpha = '255' } = Astr
 
             <!-- Hex 輸入與 Alpha 滑桿 -->
             <div class="flex-1 flex flex-col gap-1">
-                <input
-                    type="text"
-                    name={`${name}_hex`}
-                    value={valHex}
-                    placeholder="Hex (e.g. ff0000)"
-                    class="input w-full text-sm px-2 py-1 rounded-md hex-input"
-                    class:opacity-50={disabled}
-                    {disabled}
-                />
+                <label class="input w-full">
+                    <span class="label">#</span>
+                    <input
+                        type="text"
+                        name={`${name}_hex`}
+                        value={valHex}
+                        placeholder="Hex (e.g. ff0000)"
+                        class="w-full text-sm px-2 py-1 rounded-md hex-input"
+                        class:opacity-50={disabled}
+                        {disabled}
+                    />
+                </label>
 
                 <div class="flex items-center gap-2">
                     <input

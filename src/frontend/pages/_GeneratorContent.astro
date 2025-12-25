@@ -140,13 +140,17 @@ const generatorConfig = {
 
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Shadow</legend>
-                                        <input type="number" name="bg_shadow" class="input w-full" placeholder="0" />
+                                        <label class="input w-full">
+                                            <input type="number" name="bg_shadow" class="w-full" placeholder="0" /><span class="label">%</span>
+                                        </label>
                                         <p class="label">Optional</p>
                                     </fieldset>
 
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Radius</legend>
-                                        <input type="number" name="bg_radius" class="input w-full" placeholder="0" />
+                                        <label class="input w-full">
+                                            <input type="number" name="bg_radius" class="w-full" placeholder="0" /><span class="label">%</span>
+                                        </label>
                                         <p class="label">Optional</p>
                                     </fieldset>
 
@@ -264,6 +268,7 @@ const generatorConfig = {
                                         <legend class="fieldset-legend">Font</legend>
                                         <DropdownSelect
                                             name="font"
+                                            class="select select-bordered"
                                             options={fontOptions}
                                             placeholder="預設 (Default)"
                                         />
@@ -285,10 +290,10 @@ const generatorConfig = {
 
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Scale</legend>
-                                <div class="join w-full">
+                                <label class="input w-full px-0">
                                     <DropdownSelect
                                         name="scale"
-                                        class="join-item flex-1"
+                                        class="pl-4 select-bordered"
                                         defaultValue="1"
                                         options={[
                                             { value: '1', label: '1' },
@@ -298,8 +303,12 @@ const generatorConfig = {
                                             { value: '5', label: '5' },
                                         ]}
                                     />
-                                    <span class="join-item btn no-animation pointer-events-none">px</span>
-                                </div>
+                                    <span class="label mx-0">%</span>
+                                    <!-- <span class="join-item btn no-animation pointer-events-none">px</span> -->
+                                </label>
+
+                                <!-- <div class="join w-full">
+                                </div> -->
                             </fieldset>
 
                             <fieldset class="fieldset">
