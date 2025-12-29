@@ -96,6 +96,30 @@ swup.hooks.on('page:view', () => {
         }
     });
 });
+
+// Matomo Tracking
+var _paq = window._paq = window._paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+    var u="//track.yuaner.tw/";
+    _paq.push(['setTrackerUrl', u+'traak.php']);
+    _paq.push(['setSiteId', '5']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'traak.js'; s.parentNode.insertBefore(g,s);
+})();
+
+swup.hooks.on('content:replace', async (visit) => {
+    // Matomo Tracking
+    if (window._paq) {
+      window._paq.push(['setCustomUrl', window.location.href]);
+      window._paq.push(['setDocumentTitle', document.title]);
+      window._paq.push(['trackPageView']);
+    }
+});
+
+
 </script>
 
 <!doctype html>
