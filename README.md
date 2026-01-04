@@ -28,11 +28,11 @@ Fimg (Fake Image Generator) 預留圖產生站
 
 ## 📦 目錄結構
 ### 程式啟動點
-* Cloudflare Workers專用： /src/index.ts
+* Cloudflare Workers專用： /src/worker.ts
 * Vercel專用(Next.JS模式)
     * /src/app/route.tsx
     * /src/app/\[...slug\]/route.tsx
-* 傳統Node.JS (express)專用： /src/server.ts
+* 傳統Node.JS (express)專用： /src/node.ts
 
 ```text
 ├── src/
@@ -40,8 +40,8 @@ Fimg (Fake Image Generator) 預留圖產生站
 │   │   ├── route.tsx
 │   │   └── [...slug]/
 │   │       └── route.tsx
-│   ├── index.ts # Cloudflare Workers專用
-│   └── server.ts # 傳統node.js server專用
+│   ├── worker.ts # Cloudflare Workers專用
+│   └── node.ts # 傳統node.js server專用
 ├── vercel.json
 ├── worker-configuration.d.ts
 └── wrangler.jsonc
