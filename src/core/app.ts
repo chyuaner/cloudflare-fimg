@@ -162,35 +162,13 @@ async function coreHandler(
     });
   }
 
-  if (
-    pathname.startsWith('/err404')
-    || pathname.endsWith('.php')
-  ) {
-    const canvas = new Canvas(assetLoader);
-    const width=800, height=400;
-    canvas.setCanvasSize(width, height);
-
-    const finalElement = canvas.gen404({});
-
-    const fonts = await canvas.loadFonts();
-    const imageResponse = new ImageResponseClass(finalElement as any, {
-      width,
-      height,
-      fonts,
-      format: format as any,
-      status: 404,
-    });
-
-    return imageResponse;
-  }
-
   // ---------------------------------------------------------------------------
   // 主路由
   // ---------------------------------------------------------------------------
   // Parse the URL for image generation parameters
   // Include query string to ensure consistent parsing with debug route
   const fullPath = normalizedPath + url.search;
-  const { canvas: rawCanvasParam, bg, bd, content, query } = splitUrl(fullPath);
+  const { canvas: rawCanvasParam, bg, bd, content, query, cQuery } = splitUrl(fullPath);
 
   let responseStatus = 200; // Initial status, will change to 400 if any asset loading fails
 
@@ -214,6 +192,40 @@ async function coreHandler(
   } else {
     width = origWidth;
     height = origHeight;
+  }
+
+  const is404 = (pathname.startsWith('/err404')
+    || pathname.endsWith('.php')
+    // 若未提供寬高且 bg、bd、content、query 均沒有有效內容，視為 404
+    || (!width && !height && (
+      // bg.parts 為空陣列或不存在
+      (Array.isArray(bg?.parts) ? bg.parts.length === 0 : true) ||
+      // bd.parts 為空陣列或不存在
+      (Array.isArray(bd?.parts) ? bd.parts.length === 0 : true) ||
+      // content.parts 為空陣列或不存在
+      (Array.isArray(content?.parts) ? content.parts.length === 0 : true) ||
+      // query.parts 為空陣列或不存在
+      (Array.isArray(query?.parts) ? query.parts.length === 0 : true)
+    ))
+  );
+
+  if (is404) {
+    const canvas = new Canvas(assetLoader);
+    const width=800, height=400;
+    canvas.setCanvasSize(width, height);
+
+    const finalElement = canvas.gen404({});
+
+    const fonts = await canvas.loadFonts();
+    const imageResponse = new ImageResponseClass(finalElement as any, {
+      width,
+      height,
+      fonts,
+      format: format as any,
+      status: 404,
+    });
+
+    return imageResponse;
   }
 
   // content (ph)  ---------------------
