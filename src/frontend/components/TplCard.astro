@@ -9,13 +9,17 @@ const { id, title} = Astro.props;
         src={assetGetPath(id)}
         alt="drool-l" />
     </figure>
-    <div class="card-body">
+    <div class="card-body justify-center">
+        <p></p>
         <header class="flex justify-center items-center">
             <h2 class="card-title">{id}</h2>
         </header>
+        <p></p>
         <!-- <p>A card component has a figure, a body part, and inside body there are title and actions parts</p> -->
-        <div class="card-actions">
+        <div class="card-actions justify-end">
             <pre class="w-full overflow-x-auto bg-neutral text-neutral-content rounded-lg p-4">tpl({id})</pre>
         </div>
+
     </div>
+
 </div>

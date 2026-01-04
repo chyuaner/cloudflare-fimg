@@ -18,42 +18,75 @@ import { PUBLIC_BASE_URL } from 'astro:env/client';
         <h2>字體</h2>
 
         <div class="group">
-            <h3>圓體</h3>
-
-            <section>
-                <header>
-                    <h4>jf open 粉圓</h4>
-                </header>
-                <div class="lg:flex">
-                    <div class="flex-1">
-                        <p class="text-wrap break-all">https://github.com/justfont/open-huninn-font?tab=readme-ov-file</p>
-                        <p class="text-wrap break-all">https://justfont.com/huninn/</p>
-                    </div>
-                    <FontCard id="huninn" filename="jf-openhuninn-2.1.ttf" />
+            <div class="grid lg:grid-cols-3 gap-4">
+                <div>
+                    <section>
+                        <header>
+                            <h4>圓體 - justfont open 粉圓體</h4>
+                        </header>
+                        <div class="">
+                            <div class="">
+                                <p class="text-wrap break-all">https://justfont.com/huninn/</p>
+                            </div>
+                            <div class="not-prose grid grid-cols-1 md:grid-cols-1 gap-4">
+                                <FontCard id="huninn" filename="jf-openhuninn-2.1.ttf" />
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </section>
+                <div>
+                    <section>
+                        <header>
+                            <h4>lobster (Only English)</h4>
+                        </header>
+                        <div class="">
+                            <div class="">
+                                <p class="text-wrap break-all">https://fonts.google.com/specimen/Lobster</p>
+                            </div>
+                            <div class="not-prose grid grid-cols-1 md:grid-cols-1 gap-4">
+                                <FontCard id="lobster" filename="lobster.otf" exText="Fish~ fish~" />
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div>
+                    <section>
+                        <header>
+                            <h4>思源宋體Note Serif</h4>
+                        </header>
+                        <div class="">
+                            <div class="">
+                                <p class="text-wrap break-all">https://fonts.google.com/noto/specimen/Noto+Serif+TC</p>
+                            </div>
+                            <div class="not-prose grid grid-cols-1 md:grid-cols-1 gap-4">
+                        <FontCard id="NotoSerifB" filename="NotoSerifTC-Black.ttf" />
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
         </div>
 
         <div class="divider"></div>
 
         <div class="group">
             <h3>黑體</h3>
-            <div class="grid lg:grid-cols-2 gap-4">
+            <div class="grid lg:grid-cols-3 gap-4">
                 <section>
                     <header>
-                        <h4>Noto Sans Traditional Chinese</h4>
+                        <h4>思源黑體Noto Sans Traditional Chinese</h4>
                     </header>
 
                     <p class="text-wrap break-all">https://fonts.google.com/noto/specimen/Noto+Sans+TC</p>
 
                     <div class="flex-none not-prose flex flex-wrap gap-4">
                     </div>
-                    <div class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="not-prose grid grid-cols-1 md:grid-cols-1 gap-4">
                         <FontCard id="noto" filename="NotoSansTC-Medium.ttf" />
                     </div>
                 </section>
 
-                <section>
+                <section class="col-span-2">
                     <header>
                         <h4>台北黑體 - 翰字鑄造 JT Foundry</h4>
                     </header>
