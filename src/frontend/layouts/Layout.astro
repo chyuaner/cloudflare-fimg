@@ -130,6 +130,9 @@ swup.hooks.on('content:replace', async (visit) => {
     <meta name="generator" content={Astro.generator} />
     <title>Fimg 預留圖產生站{title ? ` - ${title}` : ``}</title>
     <link rel="icon" href="/favicon.png" type="image/png">
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#826a5c" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#23282e" media="(prefers-color-scheme: dark)" />
 
     <meta name="description" content={description ?? '提供URL直連網址，可讓你在設計網站時，在已知尺寸的情況下，可快速插入預留圖可以幫助您排版。'} />
     <meta name="keywords" content={keywords ?? 'placeholder, fake image, image generator, URL parameters, SVG, PNG, 色彩, 文字, 佔位圖'} />
