@@ -171,6 +171,9 @@ export function formToSplitUrlProps(form: HTMLFormElement): SplitUrlProps {
     const title = getVal(form, 'title');
     if (title) addToBoth('title', title);
 
+    const textSize = getVal(form, 'text_size');
+    if (textSize) addToBoth('text_size', textSize);
+
     const font = getVal(form, 'font');
     if (font) addToBoth('font', font);
 
@@ -318,6 +321,7 @@ export function splitUrlPropsToForm(props: SplitUrlProps, form: HTMLFormElement)
     // 4. Query
     if (props.query.text) setVal(form, 'text', props.query.text);
     if (props.query.title) setVal(form, 'title', props.query.title);
+    if (props.query.text_size) setVal(form, 'text_size', props.query.text_size);
     if (props.query.font) setVal(form, 'font', props.query.font);
     if (props.query.scale) setVal(form, 'scale', props.query.scale);
 

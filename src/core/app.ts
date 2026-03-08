@@ -257,7 +257,8 @@ async function coreHandler(
   }
 
   // Generate Image
-  const fontSizeVal = Math.floor(Math.min(width ?? 100, height ?? 100) / 5);
+  const textSizeOffset = query.text_size ? parseInt(query.text_size) : 0;
+  const fontSizeVal = Math.floor(Math.min(width ?? 100, height ?? 100) / 5) + (isNaN(textSizeOffset) ? 0 : textSizeOffset);
 
   const canvas = new Canvas(assetLoader);
   if (scale !== 1) {
