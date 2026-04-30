@@ -38,15 +38,38 @@ function getEl<T extends HTMLElement>(id: string): T | null {
 
 function getVal(form: HTMLFormElement, name: string): string {
     const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
-    return el ? el.value.trim() : '';
+    if (!el) return '';
+    let val = el.value.trim();
+    if (!val) return '';
+    
+    const unitEl = form.elements.namedItem(name + '_unit') as HTMLSelectElement | null;
+    if (unitEl) {
+        val += unitEl.value;
+    }
+    return val;
 }
 
 function setVal(form: HTMLFormElement, name: string, value: string | null | undefined) {
     const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
     if (el) {
-        el.value = value ?? '';
+        const unitEl = form.elements.namedItem(name + '_unit') as HTMLSelectElement | null;
+        if (unitEl && value) {
+            const match = value.match(/^([\d.]+)(.*)$/);
+            if (match) {
+                el.value = match[1];
+                unitEl.value = match[2];
+            } else {
+                el.value = value;
+                unitEl.value = '';
+            }
+        } else {
+            el.value = value ?? '';
+        }
         el.dispatchEvent(new Event('input', { bubbles: true }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
+        if (unitEl) {
+            unitEl.dispatchEvent(new Event('change', { bubbles: true }));
+        }
     }
 }
 

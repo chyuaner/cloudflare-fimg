@@ -140,16 +140,19 @@ const generatorConfig = {
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Padding</legend>
                                         <label class="input w-full">
-                                            <input type="number" name="bg_padding_w" placeholder="Width" class="w-full" /><span class="label">%</span>
+                                            <input type="number" name="bg_padding_w" placeholder="Width" class="w-full" />
+                                            <select name="bg_padding_w_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
                                             x
-                                            <input type="number" name="bg_padding_h" placeholder="Height" class="w-full" /><span class="label">%</span>
+                                            <input type="number" name="bg_padding_h" placeholder="Height" class="w-full" />
+                                            <select name="bg_padding_h_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
                                         </label>
                                     </fieldset>
 
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Shadow</legend>
                                         <label class="input w-full">
-                                            <input type="number" name="bg_shadow" class="w-full" placeholder="0" /><span class="label">%</span>
+                                            <input type="number" name="bg_shadow" class="w-full" placeholder="0" />
+                                            <select name="bg_shadow_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
                                         </label>
                                         <p class="label">Optional</p>
                                     </fieldset>
@@ -157,7 +160,8 @@ const generatorConfig = {
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Radius</legend>
                                         <label class="input w-full">
-                                            <input type="number" name="bg_radius" class="w-full" placeholder="0" /><span class="label">%</span>
+                                            <input type="number" name="bg_radius" class="w-full" placeholder="0" />
+                                            <select name="bg_radius_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
                                         </label>
                                         <p class="label">Optional</p>
                                     </fieldset>
@@ -218,7 +222,8 @@ const generatorConfig = {
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend">Width</legend>
                                             <label class="input w-full">
-                                                <input type="number" name="bd_w" placeholder="Width" class="w-full" /><span class="label">%</span>
+                                                <input type="number" name="bd_w" placeholder="Width" class="w-full" />
+                                                <select name="bd_w_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
                                             </label>
                                         </fieldset>
 
