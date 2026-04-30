@@ -23,6 +23,11 @@ const tplOptions = Object.entries(pathMap).map(([key, value]) => ({
     image: value // Example for future use
 }));
 
+const unitOptions = [
+    { label: '%', value: '' },
+    { label: 'px', value: 'p' }
+];
+
 const generatorConfig = {
     debounceDelay: 1000,
     defaults: {
@@ -110,11 +115,11 @@ const generatorConfig = {
                             <div class="content collapsible-content" id="content-canvas-size">
                                 <div>
                                     <fieldset class="fieldset">
-                                        <label class="input w-full">
+                                        <div class="input w-full">
                                             <input type="number" name="canvas_width" placeholder="Width" class="w-full" /><span class="label">px</span>
                                             x
                                             <input type="number" name="canvas_height" placeholder="Height" class="w-full" /><span class="label">px</span>
-                                        </label>
+                                        </div>
                                     </fieldset>
                                 </div>
                             </div>
@@ -139,30 +144,30 @@ const generatorConfig = {
                                 <div>
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Padding</legend>
-                                        <label class="input w-full">
+                                        <div class="input w-full pr-1">
                                             <input type="number" name="bg_padding_w" placeholder="Width" class="w-full" />
-                                            <select name="bg_padding_w_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
-                                            x
+                                            <div class="w-16 shrink-0"><DropdownSelect name="bg_padding_w_unit" class="bg-transparent border-0 opacity-70 !min-h-0 !px-1 text-sm" options={unitOptions} defaultValue="" /></div>
+                                            <span class="opacity-50 mx-1 text-sm">x</span>
                                             <input type="number" name="bg_padding_h" placeholder="Height" class="w-full" />
-                                            <select name="bg_padding_h_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
-                                        </label>
+                                            <div class="w-16 shrink-0"><DropdownSelect name="bg_padding_h_unit" class="bg-transparent border-0 opacity-70 !min-h-0 !px-1 text-sm" options={unitOptions} defaultValue="" /></div>
+                                        </div>
                                     </fieldset>
 
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Shadow</legend>
-                                        <label class="input w-full">
+                                        <div class="input w-full pr-1">
                                             <input type="number" name="bg_shadow" class="w-full" placeholder="0" />
-                                            <select name="bg_shadow_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
-                                        </label>
+                                            <div class="w-16 shrink-0"><DropdownSelect name="bg_shadow_unit" class="bg-transparent border-0 opacity-70 !min-h-0 !px-1 text-sm" options={unitOptions} defaultValue="" /></div>
+                                        </div>
                                         <p class="label">Optional</p>
                                     </fieldset>
 
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Radius</legend>
-                                        <label class="input w-full">
+                                        <div class="input w-full pr-1">
                                             <input type="number" name="bg_radius" class="w-full" placeholder="0" />
-                                            <select name="bg_radius_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
-                                        </label>
+                                            <div class="w-16 shrink-0"><DropdownSelect name="bg_radius_unit" class="bg-transparent border-0 opacity-70 !min-h-0 !px-1 text-sm" options={unitOptions} defaultValue="" /></div>
+                                        </div>
                                         <p class="label">Optional</p>
                                     </fieldset>
 
@@ -221,10 +226,10 @@ const generatorConfig = {
                                     <div class="tab-content bg-base-100/50 border-base-300 p-3">
                                         <fieldset class="fieldset">
                                             <legend class="fieldset-legend">Width</legend>
-                                            <label class="input w-full">
+                                            <div class="input w-full pr-1">
                                                 <input type="number" name="bd_w" placeholder="Width" class="w-full" />
-                                                <select name="bd_w_unit" class="bg-transparent text-sm opacity-70 outline-none pr-1"><option value="">%</option><option value="p">px</option></select>
-                                            </label>
+                                                <div class="w-16 shrink-0"><DropdownSelect name="bd_w_unit" class="bg-transparent border-0 opacity-70 !min-h-0 !px-1 text-sm" options={unitOptions} defaultValue="" /></div>
+                                            </div>
                                         </fieldset>
 
                                         <fieldset class="fieldset">
@@ -275,11 +280,11 @@ const generatorConfig = {
                                 <div class="tab-content bg-base-100/50 border-base-300 p-3">
                                     <fieldset class="fieldset" id="block-size-fieldset">
                                         <legend class="fieldset-legend">區塊大小 (Block Size)</legend>
-                                        <label class="input w-full">
+                                        <div class="input w-full">
                                             <input type="number" name="ph_width" placeholder="Width" class="w-full" /><span class="label">px</span>
                                             x
                                             <input type="number" name="ph_height" placeholder="Height" class="w-full" /><span class="label">px</span>
-                                        </label>
+                                        </div>
                                     </fieldset>
 
                                     <fieldset class="fieldset">
@@ -383,7 +388,7 @@ const generatorConfig = {
 
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Scale</legend>
-                                <label class="input w-full px-0">
+                                <div class="input w-full px-0">
                                     <DropdownSelect
                                         name="scale"
                                         class="pl-4 select-bordered"
@@ -397,7 +402,7 @@ const generatorConfig = {
                                         ]}
                                     />
                                     <span class="label mx-0"> * 100%</span>
-                                </label>
+                                </div>
                             </fieldset>
 
                             <fieldset class="fieldset">
