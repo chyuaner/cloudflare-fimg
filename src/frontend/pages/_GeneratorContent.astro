@@ -96,7 +96,7 @@ const generatorConfig = {
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div class="lg:col-span-5">
 
-            <form id="generator-form" action="/generate" method="GET" data-config={JSON.stringify(generatorConfig)}>
+            <form id="generator-form" action="/generate-form" method="GET" data-config={JSON.stringify(generatorConfig)}>
             <div class="grid gap-4">
                     <!-- Canvas Size Section -->
                     <section class="card bg-indigo-600/30 shadow-sm">
@@ -108,7 +108,7 @@ const generatorConfig = {
                                 </h2>
                                 <div class="pr-2">
                                     <p class="label">Optional</p>
-                                    <input type="checkbox" id="toggle-canvas-size" class="toggle" />
+                                    <input type="checkbox" id="toggle-canvas-size" name="toggle_canvas" class="toggle section-toggle" />
                                 </div>
                             </header>
 
@@ -136,7 +136,7 @@ const generatorConfig = {
                                 </h2>
                                 <div class="pr-2">
                                     <p class="label">Optional</p>
-                                    <input type="checkbox" id="toggle-edge-bg" class="toggle" />
+                                    <input type="checkbox" id="toggle-edge-bg" name="toggle_bg" class="toggle section-toggle" />
                                 </div>
                             </header>
 
@@ -213,7 +213,7 @@ const generatorConfig = {
                                 </h2>
                                 <div class="text-sm">
                                     <p class="label">Optional</p>
-                                    <input type="checkbox" id="toggle-bd" class="toggle" />
+                                    <input type="checkbox" id="toggle-bd" name="toggle_bd" class="toggle section-toggle" />
                                 </div>
                             </header>
                             <div class="content collapsible-content" id="content-bd">
@@ -423,9 +423,15 @@ const generatorConfig = {
                                 </div>
                             </fieldset>
 
-                            <noscript>
-                                <button type="submit" class="btn btn-primary w-full mt-4">Generate URL (No JS)</button>
-                            </noscript>
+                            <div class="nojs-only">
+                                <div class="alert alert-warning mt-4 shadow-lg">
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                        <span>偵測到您已關閉 JavaScript，請使用下方按鈕手動送出表單產生圖片：</span>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-full mt-2">Generate URL (No JS)</button>
+                                </div>
+                            </div>
 
                         </div>
                     </section>
@@ -507,7 +513,34 @@ const generatorConfig = {
 </script>
 <!-- 原生 JavaScript：關閉 alert -->
 <!-- -------------- CSS：淡出動畫（保留）---------------------- -->
+<style is:global>
+    /* 原生隱藏需要 JS 輔助的區塊 */
+    html:not(.no-js) .nojs-only {
+        display: none !important;
+    }
+
+    /* 無 JS 時隱藏 eurl 及右側預覽 */
+    .no-js #eurl-sticky,
+    .no-js #preview-sticky-container {
+        display: none !important;
+    }
+    
+    /* 將左側表單在 lg 螢幕時填滿全寬 */
+    .no-js .lg\:col-span-5 {
+        grid-column: span 12 / span 12 !important;
+    }
+    
+    /* 原生無 JS 時，強制覆蓋 .collapsible-content 的預設隱藏狀態 */
+    .no-js section:has(.section-toggle:checked) .collapsible-content {
+        grid-template-rows: 1fr !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        padding-top: 1rem !important; /* 等同 Tailwind 的 pt-4 */
+    }
+</style>
+
 <style>
+
   /* 初始狀態：可見 */
   #tablet-orientation-alert {
     transition: opacity 0.3s ease, transform 0.3s ease;

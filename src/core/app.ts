@@ -95,6 +95,171 @@ async function coreHandler(
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // /generate-form 路由 (No-JS fallback)
+  // ---------------------------------------------------------------------------
+  if (pathname.startsWith('/generate-form')) {
+    const searchParams = url.searchParams;
+
+    let pathParts: string[] = [];
+
+    // 1. Canvas Size
+    if (searchParams.get('toggle_canvas') === 'on') {
+      const cw = searchParams.get('canvas_width');
+      const ch = searchParams.get('canvas_height');
+      if (cw || ch) {
+        pathParts.push(`${cw || ''}x${ch || ''}`);
+      }
+    }
+
+    // 2. Edge Background (/bg/...)
+    if (searchParams.get('toggle_bg') === 'on') {
+      // padding
+      const pw = searchParams.get('bg_padding_w') || '';
+      const pwu = searchParams.get('bg_padding_w_unit') || '';
+      const ph = searchParams.get('bg_padding_h') || '';
+      const phu = searchParams.get('bg_padding_h_unit') || '';
+      const paddingStr = (pw || ph) ? `${pw}${pwu}x${ph}${phu}` : '';
+      
+      // shadow
+      const sw = searchParams.get('bg_shadow') || '';
+      const swu = searchParams.get('bg_shadow_unit') || '';
+      const shadowStr = sw ? `${sw}${swu}` : '';
+      
+      // radius
+      const rw = searchParams.get('bg_radius') || '';
+      const rwu = searchParams.get('bg_radius_unit') || '';
+      const radiusStr = rw ? `${rw}${rwu}` : '';
+      
+      // type
+      const bgType = searchParams.get('bg_type');
+      let bgColorStr = '';
+      if (bgType === 'color') {
+        bgColorStr = searchParams.get('bg_color')?.replace('#', '') || '';
+      } else if (bgType === 'tpl') {
+        bgColorStr = `tpl(${searchParams.get('bg_tpl') || ''})`;
+      } else if (bgType === 'none') {
+        bgColorStr = 'none';
+      }
+
+      let bgP = [
+        paddingStr,
+        shadowStr,
+        radiusStr,
+        bgColorStr
+      ];
+      while(bgP.length > 0 && bgP[bgP.length - 1] === '') {
+        bgP.pop();
+      }
+      if (bgP.length > 0) {
+        pathParts.push('bg');
+        pathParts.push(...bgP);
+      }
+    }
+
+    // 3. Border (/bd/...)
+    if (searchParams.get('toggle_bd') === 'on') {
+      const bdw = searchParams.get('bd_w') || '';
+      const bdwu = searchParams.get('bd_w_unit') || '';
+      const bdType = searchParams.get('bd_type');
+      let bdColorStr = '';
+      if (bdType === 'color') {
+        bdColorStr = searchParams.get('bd_color')?.replace('#', '') || '';
+      } else if (bdType === 'none') {
+        bdColorStr = 'none';
+      }
+
+      let bdP = [
+        bdw ? `${bdw}${bdwu}` : '',
+        bdColorStr
+      ];
+      while(bdP.length > 0 && bdP[bdP.length - 1] === '') {
+        bdP.pop();
+      }
+      if (bdP.length > 0) {
+        pathParts.push('bd');
+        pathParts.push(...bdP);
+      }
+    }
+
+    // 4. Main Content
+    // size
+    const phw = searchParams.get('ph_width') || '';
+    const phh = searchParams.get('ph_height') || '';
+    if (phw || phh) {
+      pathParts.push(`${phw}x${phh}`);
+    }
+
+    // bg color
+    const phBgType = searchParams.get('ph_bg_type');
+    let phBgStr = '';
+    if (phBgType === 'color') {
+      phBgStr = searchParams.get('ph_bg_color')?.replace('#', '') || '';
+    } else if (phBgType === 'tpl') {
+      phBgStr = `tpl(${searchParams.get('ph_bg_tpl') || ''})`;
+    } else if (phBgType === 'default') {
+      phBgStr = '';
+    }
+
+    // fg color
+    const phFgType = searchParams.get('ph_fg_type');
+    let phFgStr = '';
+    if (phFgType === 'color') {
+      phFgStr = searchParams.get('ph_fg_color')?.replace('#', '') || '';
+    } else if (phFgType === 'default') {
+      phFgStr = '';
+    }
+
+    if (phBgStr || phFgStr) {
+      pathParts.push(phBgStr);
+      if (phFgStr) {
+        pathParts.push(phFgStr);
+      }
+    }
+
+    // Combine path
+    let targetPath = '/' + pathParts.join('/');
+    
+    // Handle Filetype
+    const filetype = searchParams.get('filetype');
+    if (filetype && filetype !== 'null') {
+      if (targetPath.endsWith('/')) {
+        targetPath = targetPath.slice(0, -1);
+      }
+      targetPath += `.${filetype}`;
+    }
+
+    // Query parameters
+    const queryParams = new URLSearchParams();
+    const text = searchParams.get('text');
+    if (text) queryParams.set('text', text);
+    const title = searchParams.get('title');
+    if (title) queryParams.set('title', title);
+    const font = searchParams.get('font');
+    if (font) queryParams.set('font', font);
+    const textSize = searchParams.get('text_size');
+    if (textSize) queryParams.set('text_size', textSize);
+    const scale = searchParams.get('scale');
+    if (scale && scale !== '1') queryParams.set('scale', scale);
+    if (searchParams.get('debug') === '1') queryParams.set('debug', '1');
+
+    const queryString = queryParams.toString();
+    if (queryString) {
+      targetPath += '?' + queryString;
+    }
+
+    if (targetPath === '/' || targetPath === '') {
+      targetPath = '/300x200';
+    }
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': targetPath
+      }
+    });
+  }
+
   // ===========================================================================
   // 以下都是產圖邏輯
   // ===========================================================================
