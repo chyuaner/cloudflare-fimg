@@ -101,126 +101,142 @@ async function coreHandler(
   if (pathname.startsWith('/generate-form')) {
     const searchParams = url.searchParams;
 
-    let pathParts: string[] = [];
+    const getValFromParams = (name: string): string => {
+      const val = (searchParams.get(name) || '').trim();
+      if (!val) return '';
+      const unit = searchParams.get(name + '_unit') || '';
+      return val + unit;
+    };
+
+    const getColorFromParams = (prefix: string): string | null => {
+      const type = searchParams.get(`${prefix}_type`);
+
+      if (type === 'tpl') {
+        const tpl = searchParams.get(`${prefix}_tpl`);
+        return tpl ? `tpl(${tpl})` : null;
+      }
+
+      if (type === 'color') {
+        let hex = searchParams.get(`${prefix}_color_hex`) || '';
+        hex = hex.replace('#', '').trim();
+        const alpha = searchParams.get(`${prefix}_color_alpha`);
+        if (!hex) return null;
+        if (alpha && alpha !== '255') return `${hex},${alpha}`;
+        return hex;
+      }
+
+      return null;
+    };
 
     // 1. Canvas Size
-    if (searchParams.get('toggle_canvas') === 'on') {
-      const cw = searchParams.get('canvas_width');
-      const ch = searchParams.get('canvas_height');
-      if (cw || ch) {
-        pathParts.push(`${cw || ''}x${ch || ''}`);
-      }
+    const isCanvasEnabled = searchParams.get('toggle_canvas') === 'on';
+    let canvas: string | null = null;
+    if (isCanvasEnabled) {
+      const w = getValFromParams('canvas_width');
+      const h = getValFromParams('canvas_height');
+      if (w && h) canvas = `${w}x${h}`;
+      else if (w) canvas = w;
+      else if (h) canvas = h;
     }
 
-    // 2. Edge Background (/bg/...)
-    if (searchParams.get('toggle_bg') === 'on') {
-      // padding
-      const pw = searchParams.get('bg_padding_w') || '';
-      const pwu = searchParams.get('bg_padding_w_unit') || '';
-      const ph = searchParams.get('bg_padding_h') || '';
-      const phu = searchParams.get('bg_padding_h_unit') || '';
-      const paddingStr = (pw || ph) ? `${pw}${pwu}x${ph}${phu}` : '';
-      
-      // shadow
-      const sw = searchParams.get('bg_shadow') || '';
-      const swu = searchParams.get('bg_shadow_unit') || '';
-      const shadowStr = sw ? `${sw}${swu}` : '';
-      
-      // radius
-      const rw = searchParams.get('bg_radius') || '';
-      const rwu = searchParams.get('bg_radius_unit') || '';
-      const radiusStr = rw ? `${rw}${rwu}` : '';
-      
-      // type
-      const bgType = searchParams.get('bg_type');
-      let bgColorStr = '';
-      if (bgType === 'color') {
-        bgColorStr = searchParams.get('bg_color')?.replace('#', '') || '';
-      } else if (bgType === 'tpl') {
-        bgColorStr = `tpl(${searchParams.get('bg_tpl') || ''})`;
-      } else if (bgType === 'none') {
-        bgColorStr = 'none';
-      }
+    // 2. Edge Background
+    const isBgEnabled = searchParams.get('toggle_bg') === 'on';
+    let bgPadding: string | null = null;
+    let bgShadow: string | null = null;
+    let bgRadius: string | null = null;
+    let bgBgcolor: string | null = null;
 
-      let bgP = [
-        paddingStr,
-        shadowStr,
-        radiusStr,
-        bgColorStr
-      ];
-      while(bgP.length > 0 && bgP[bgP.length - 1] === '') {
-        bgP.pop();
-      }
-      if (bgP.length > 0) {
-        pathParts.push('bg');
-        pathParts.push(...bgP);
-      }
+    if (isBgEnabled) {
+      const pw = getValFromParams('bg_padding_w');
+      const ph = getValFromParams('bg_padding_h');
+      if (pw && ph) bgPadding = (pw === ph) ? pw : `${pw}x${ph}`;
+      else if (pw) bgPadding = pw;
+      else if (ph) bgPadding = `0x${ph}`;
+
+      const shadow = getValFromParams('bg_shadow');
+      if (shadow) bgShadow = shadow;
+
+      const radius = getValFromParams('bg_radius');
+      if (radius) bgRadius = radius;
+
+      bgBgcolor = getColorFromParams('bg');
     }
 
-    // 3. Border (/bd/...)
-    if (searchParams.get('toggle_bd') === 'on') {
-      const bdw = searchParams.get('bd_w') || '';
-      const bdwu = searchParams.get('bd_w_unit') || '';
-      const bdType = searchParams.get('bd_type');
-      let bdColorStr = '';
-      if (bdType === 'color') {
-        bdColorStr = searchParams.get('bd_color')?.replace('#', '') || '';
-      } else if (bdType === 'none') {
-        bdColorStr = 'none';
+    // 3. Border
+    const isBdEnabled = searchParams.get('toggle_bd') === 'on';
+    let bdWidth: string | null = null;
+    let bdColor: string | null = null;
+
+    if (isBdEnabled) {
+      const w = getValFromParams('bd_w');
+      if (w) bdWidth = w;
+      bdColor = getColorFromParams('bd');
+    }
+
+    // 4. Content (ph)
+    let contentSize: string | null = null;
+    if (!canvas) {
+      const w = getValFromParams('ph_width');
+      const h = getValFromParams('ph_height');
+      if (w && h) contentSize = `${w}x${h}`;
+      else if (w) contentSize = w;
+      else if (h) contentSize = h;
+    }
+
+    const contentBgcolor = getColorFromParams('ph_bg');
+    const contentFgcolor = getColorFromParams('ph_fg');
+
+    const cleanParts = (parts: (string | null)[]): string[] => {
+      let lastIdx = -1;
+      for (let i = parts.length - 1; i >= 0; i--) {
+        if (parts[i] !== null) {
+          lastIdx = i;
+          break;
+        }
       }
+      if (lastIdx === -1) return [];
+      return parts.slice(0, lastIdx + 1).map(p => p === null ? 'null' : p);
+    };
 
-      let bdP = [
-        bdw ? `${bdw}${bdwu}` : '',
-        bdColorStr
-      ];
-      while(bdP.length > 0 && bdP[bdP.length - 1] === '') {
-        bdP.pop();
-      }
-      if (bdP.length > 0) {
-        pathParts.push('bd');
-        pathParts.push(...bdP);
-      }
+    const bgParts = cleanParts([bgPadding, bgShadow, bgRadius, bgBgcolor]);
+    const bdParts = cleanParts([bdWidth, bdColor]);
+
+    let rawContentParts: (string | null)[];
+    if (canvas) {
+      rawContentParts = [contentBgcolor, contentFgcolor];
+    } else {
+      rawContentParts = [contentSize, contentBgcolor, contentFgcolor];
+    }
+    const contentParts = cleanParts(rawContentParts);
+
+    const pathParts: string[] = [];
+    if (canvas) {
+      pathParts.push(canvas);
     }
 
-    // 4. Main Content
-    // size
-    const phw = searchParams.get('ph_width') || '';
-    const phh = searchParams.get('ph_height') || '';
-    if (phw || phh) {
-      pathParts.push(`${phw}x${phh}`);
+    if (bgParts.length > 0) {
+      pathParts.push('bg');
+      pathParts.push(...bgParts);
     }
 
-    // bg color
-    const phBgType = searchParams.get('ph_bg_type');
-    let phBgStr = '';
-    if (phBgType === 'color') {
-      phBgStr = searchParams.get('ph_bg_color')?.replace('#', '') || '';
-    } else if (phBgType === 'tpl') {
-      phBgStr = `tpl(${searchParams.get('ph_bg_tpl') || ''})`;
-    } else if (phBgType === 'default') {
-      phBgStr = '';
+    if (bdParts.length > 0) {
+      pathParts.push('bd');
+      pathParts.push(...bdParts);
     }
 
-    // fg color
-    const phFgType = searchParams.get('ph_fg_type');
-    let phFgStr = '';
-    if (phFgType === 'color') {
-      phFgStr = searchParams.get('ph_fg_color')?.replace('#', '') || '';
-    } else if (phFgType === 'default') {
-      phFgStr = '';
-    }
+    const hasCanvas = !!canvas;
+    const hasBg = bgParts.length > 0;
+    const hasBd = bdParts.length > 0;
+    const type = 'ph';
+    const omitType = !hasCanvas && !hasBg && !hasBd;
 
-    if (phBgStr || phFgStr) {
-      pathParts.push(phBgStr);
-      if (phFgStr) {
-        pathParts.push(phFgStr);
-      }
+    if (!omitType) {
+      pathParts.push(type);
     }
+    pathParts.push(...contentParts);
 
-    // Combine path
     let targetPath = '/' + pathParts.join('/');
-    
-    // Handle Filetype
+
     const filetype = searchParams.get('filetype');
     if (filetype && filetype !== 'null') {
       if (targetPath.endsWith('/')) {
@@ -229,7 +245,6 @@ async function coreHandler(
       targetPath += `.${filetype}`;
     }
 
-    // Query parameters
     const queryParams = new URLSearchParams();
     const text = searchParams.get('text');
     if (text) queryParams.set('text', text);
